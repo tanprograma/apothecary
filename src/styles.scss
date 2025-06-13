@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
+@import "./styles/layout.scss";
+@import "./styles/button.scss";
+@import "./styles/form.scss";
+@import "./styles/input.scss";
+@import "./styles/link.scss";
+@import "./styles/list.scss";
+@import "./styles/table.scss";
+@import "./styles/heading.scss";
+@import "./styles/details.scss";
+@import "./styles/request-status.scss";
+@import "./styles/animations.scss";
+@import "./styles/bg.scss";
+@import "./styles/height.scss";

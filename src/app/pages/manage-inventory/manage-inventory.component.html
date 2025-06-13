@@ -1,0 +1,66 @@
+<div class="page">
+  <div class="component">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }}&nbsp;inventory &nbsp; management
+    </h2>
+  </div>
+  @if (showDetails&& !!inventoryStore.selectedInventory()) {
+  <div class="component manage-area">
+    <div class="component relative manage-area-action">
+      <button
+        class="btn-danger--round absolute action-btn"
+        (click)="closeManageView()"
+      >
+        <fa-icon [icon]="cancelIcon"></fa-icon>
+      </button>
+    </div>
+    <!-- show details -->
+    <div class="component details manage-comp">
+      <h3 class="text-center">details</h3>
+      <inventory-details></inventory-details>
+    </div>
+    <!-- manage expiry -->
+    <div class="component manage-comp">
+      <h3 class="text-center">set expiry</h3>
+      <manage-expiry></manage-expiry>
+    </div>
+    <!-- manage quantity -->
+    <div class="component manage-comp">
+      <h3 class="text-center">set quantity</h3>
+      <manage-quantity></manage-quantity>
+    </div>
+    <!-- manage price -->
+    <!-- <div class="component manage-comp">
+      <h3 class="text-center">set prices</h3>
+      <manage-expiry></manage-expiry>
+    </div> -->
+  </div>
+  }@else {
+  <div class="component data-frames">
+    <!-- conntainer for inventory data -->
+
+    <div class="component flex">
+      <!-- headers of the table -->
+      <div class="sn flex-10">sn</div>
+
+      <div class="product flex-60">product</div>
+      <!-- <div class="unit flex-10">{{ item.quantity }}</div> -->
+      <div class="expiry flex-20">expiry</div>
+      <div class="edit flex-10">edit</div>
+    </div>
+    @for (item of inventoryStore.inventory(); track $index) {
+    <div class="component flex data-frame" (click)="selectInventoryItem(item)">
+      <!-- displays the data frame -->
+      <div class="sn flex-10">{{ $index + 1 }}</div>
+
+      <div class="product flex-60">{{ item.product.name }}</div>
+      <!-- <div class="unit flex-10">{{ item.quantity }}</div> -->
+      <div class="expiry flex-20">
+        {{ !!item.expiry ? item.expiry : "not set" }}
+      </div>
+      <div class="edit flex-10"><fa-icon [icon]="editIcon"></fa-icon></div>
+    </div>
+    }
+  </div>
+  }
+</div>

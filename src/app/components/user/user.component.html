@@ -1,0 +1,19 @@
+@if (!!userStore.loggedUser()) {
+<div class="flex ml-auto">
+  <div class="user">
+    <div class="user-icon flex flex-center">
+      <fa-icon [icon]="userIcon"></fa-icon>
+    </div>
+    <div class="user-details">
+      {{ userStore.loggedUser()?.firstname | uppercase }}
+      {{ userStore.loggedUser()?.lastname | uppercase }}
+    </div>
+  </div>
+
+  <div class="logout flex flex-center">
+    <button class="btn-neutral--round" (click)="logOut()">
+      <fa-icon [icon]="logoutIcon"></fa-icon>
+    </button>
+  </div>
+</div>
+}

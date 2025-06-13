@@ -1,12 +1,36 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { UserComponent } from './components/user/user.component';
+
+import { JsonPipe } from '@angular/common';
+import { RequestAllertStore } from './app-stores/request-allert.store';
+import { AllertLoadingComponent } from './components/allert-loading/allert-loading.component';
+
+import { AllertFailureComponent } from './components/allert-failure/allert-failure.component';
+import { AllertSuccessComponent } from './components/allert-success/allert-success.component';
+import { NotificationService } from './services/notification.service';
+import { UsersStore } from './app-stores/users.store';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet,
+    UserComponent,
+    JsonPipe,
+    AllertLoadingComponent,
+
+    AllertFailureComponent,
+    AllertSuccessComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'apothecary';
+  requestAllertStore = inject(RequestAllertStore);
+  notificationService = inject(NotificationService);
+  userStore = inject(UsersStore);
+  ngOnInit(): void {
+    this.userStore.restoreSession();
+  }
 }

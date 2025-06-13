@@ -1,0 +1,17 @@
+<div class="page flex hide-scroll">
+  <div class="flex-20 h-full menu">
+    <dropdown-links
+      [open]="true"
+      [title]="'actions'"
+      [links]="outletStore.shopLinks()"
+    ></dropdown-links>
+    <dropdown-links
+      [open]="true"
+      [title]="'other links'"
+      [links]="outletStore.manageLinks()"
+    ></dropdown-links>
+  </div>
+  <div class="flex-80 h-full">
+    <router-outlet></router-outlet>
+  </div>
+</div>

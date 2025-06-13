@@ -1,0 +1,24 @@
+<ul>
+  @for (item of cartItems; track $index) {
+  <li class="flex flex-center">
+    <span class="flex-30"
+      >{{ item.product }} &nbsp;({{ item.unit }} &nbsp;x{{
+        item.quantity || item.requested
+      }})
+    </span>
+    <!-- <span class="flex-10">
+        {{ item.unit }}
+      </span> -->
+
+    <span class="flex-10">{{
+      item.price * (item.quantity || item.requested) | currency : "TZS"
+    }}</span>
+    <button
+      class="btn-secondary--round remove-btn"
+      (click)="removeFromCart(item)"
+    >
+      <fa-icon [icon]="crossIcon"></fa-icon>
+    </button>
+  </li>
+  }
+</ul>

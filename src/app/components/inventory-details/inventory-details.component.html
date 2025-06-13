@@ -1,0 +1,43 @@
+<table class="">
+  <thead>
+    <tr>
+      <th>property</th>
+      <th>details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>name</td>
+      <td>{{ inventoryStore.selectedInventory()?.product?.name }}</td>
+    </tr>
+    <tr>
+      <td>quantity (each)</td>
+      <td>{{ inventoryStore.selectedInventory()?.quantity }}</td>
+    </tr>
+    @for (item of inventoryStore.selectedInventory()?.product?.units; track
+    $index) { @if($index==0){
+    <tr>
+      <td
+        [rowSpan]="inventoryStore.selectedInventory()?.product?.units?.length"
+      >
+        units
+      </td>
+      <td>{{ item.name }}(x{{ item.value }})</td>
+    </tr>
+    }@else {
+    <tr>
+      <td>{{ item.name }}(x{{ item.value }})</td>
+    </tr>
+    } }
+    <tr>
+      <td>expiry</td>
+      <td>
+        {{
+          !!inventoryStore.selectedInventory()?.expiry
+            ? inventoryStore.selectedInventory()?.expiry
+            : "not set"
+        }}
+      </td>
+    </tr>
+  </tbody>
+</table>

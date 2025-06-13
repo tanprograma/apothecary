@@ -1,0 +1,17 @@
+<div class="stack-top">
+  <!-- sits on top of the stack -->
+  <div class="opaque-50">
+    <!-- sets the opaqueness of the container -->
+    <div class="allert-container flex flex-center">
+      <!-- restores the opaqueness (absolute) -->
+      <div class="div-allert">
+        @if (!!reqState.notification.message) {
+        <p class="message">{{ reqState.notification.message }}</p>
+        }
+        <div class="flex flex-center">
+          <button class="btn-neutral" (click)="reset()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

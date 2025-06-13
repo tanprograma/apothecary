@@ -1,0 +1,42 @@
+<div class="page">
+  <div class="component">
+    <h2 class="text-center">stores management</h2>
+  </div>
+  <form class="component" [formGroup]="form" (ngSubmit)="submit()">
+    <h3 class="text-center">create store</h3>
+    <div class="component flex flex-center">
+      <div class="control">
+        <input
+          type="text"
+          name="store"
+          id="store"
+          placeholder="type name of store"
+          autocomplete="off"
+          formControlName="store"
+          class="input-primary"
+        />
+      </div>
+      <div class="control">
+        <button class="btn-primary--round" [disabled]="form.invalid">
+          <fa-icon [icon]="plusIcon"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </form>
+  <table class="component">
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>store name</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of outletStore.stores(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.name }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

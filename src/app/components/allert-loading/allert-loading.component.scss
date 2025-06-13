@@ -1,0 +1,39 @@
+.allert-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  cursor: not-allowed;
+  background-color: black;
+  opacity: 80%;
+}
+.div-allert {
+  background-color: rgb(47, 255, 175);
+  color: black;
+  opacity: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+.loader {
+  height: 1rem;
+  // width: 100%;
+  border-radius: 5px;
+
+  animation: loading 1s ease-in infinite;
+}
+@keyframes loading {
+  0% {
+    background-color: black;
+  }
+  20% {
+    background-color: magenta;
+  }
+  50% {
+    background-color: green;
+  }
+  100% {
+    background-color: red;
+  }
+}
+.loader-container {
+  min-width: 200px;
+}

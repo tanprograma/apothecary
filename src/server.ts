@@ -5,12 +5,25 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import products from '../api/routes/products';
+import inventories from '../api/routes/inventories';
+import stores from '../api/routes/stores';
+import sales from '../api/routes/sales';
+import units from '../api/routes/units';
+// import categories from '../api/routes/categories';
+import suppliers from '../api/routes/suppliers';
+import requests from '../api/routes/requests';
+import purchases from '../api/routes/purchases';
+import users from '../api/routes/user';
+import expired from '../api/routes/expired';
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
-
+dotenv.config();
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
@@ -34,8 +47,34 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  }),
+  })
 );
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin', ['*']);
+  res.append('Access-Control-Allow-Headers', ['*']);
+  res.append('Access-Control-Allow-Methods', [
+    'PUT',
+    'GET',
+    'HEAD',
+    'POST',
+    'DELETE',
+    'OPTIONS',
+  ]);
+
+  next();
+});
+app.use(express.json());
+app.use('/api/products', products);
+app.use('/api/stores', stores);
+app.use('/api/inventories', inventories);
+app.use('/api/sales', sales);
+app.use('/api/units', units);
+// app.use('/api/categories', categories);
+app.use('/api/requests', requests);
+app.use('/api/purchases', purchases);
+app.use('/api/suppliers', suppliers);
+app.use('/api/users', users);
+app.use('/api/expired', expired);
 
 /**
  * Handle all other requests by rendering the Angular application.
@@ -44,7 +83,7 @@ app.use('/**', (req, res, next) => {
   angularApp
     .handle(req)
     .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
+      response ? writeResponseToNodeResponse(response, res) : next()
     )
     .catch(next);
 });
@@ -55,8 +94,19 @@ app.use('/**', (req, res, next) => {
  */
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
+
   app.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
+
+    const DATABASE_URL = (process.env['DATABASE_URL'] as string) || '';
+    mongoose
+      .connect(DATABASE_URL)
+      .then(() => {
+        console.log(`database ${DATABASE_URL} connected successfully`);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   });
 }
 

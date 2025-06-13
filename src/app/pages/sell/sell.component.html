@@ -1,0 +1,37 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;dispense
+    </h2>
+  </div>
+  <sale-form />
+
+  <div class="component">
+    <table>
+      <thead>
+        <tr>
+          <th>sn</th>
+          <th>date</th>
+          <th>time</th>
+          <th>product</th>
+          <th>unit</th>
+          <th>quantity</th>
+          <th>amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of salesStore.sales(); track $index) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ item.date }}</td>
+          <td>{{ item.time }}</td>
+          <td>{{ item.product }}</td>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.quantity * item.price | currency : "Tzs" }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

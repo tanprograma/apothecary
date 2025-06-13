@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="component">
+    <h2 class="text-center">products management</h2>
+  </div>
+  <div class="component">
+    <form class="" [formGroup]="form">
+      <h3 class="text-center">create product</h3>
+      <div class="component flex flex-center">
+        <div class="control">
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder=" product name"
+            autocomplete="off"
+            formControlName="name"
+            class="input-primary"
+          />
+        </div>
+        <div class="control">
+          <select
+            type="text"
+            name="unit"
+            id="unit"
+            formControlName="unit"
+            class="input-primary"
+          >
+            <option value="" selected disabled>select unit</option>
+            @for (item of unitsStore.units(); track $index) {
+            <option [value]="item.name">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="control">
+          <input
+            type="number"
+            name="value"
+            id="value"
+            autocomplete="off"
+            formControlName="value"
+            class="input-primary"
+          />
+        </div>
+        <div class="control">
+          <button class="btn-primary--round" [disabled]="form.invalid">
+            <fa-icon [icon]="plusIcon"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    @if (!!form.value.name) {
+    <div class="component">
+      <p>product: {{ form.value.name }}</p>
+      <p>
+        units &nbsp; @for (item of units; track $index) {
+        <span>{{ item.name }}</span
+        >&nbsp;}
+      </p>
+    </div>
+    <div class="component flex flex-center">
+      <button class="btn-primary" (click)="submit()">save product</button>
+    </div>
+    }
+  </div>
+  <table class="component">
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>supplier name</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of productsStore.products(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.name }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

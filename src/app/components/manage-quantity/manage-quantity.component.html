@@ -1,0 +1,21 @@
+<form class="" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="component flex flex-center">
+    <div class="control">
+      <input
+        type="number"
+        name="quantity"
+        id="quantity"
+        [value]="inventoriesStore.selectedInventory()?.quantity"
+        formControlName="quantity"
+        placeholder="quantity"
+        class="input-primary"
+      />
+    </div>
+
+    <div class="control">
+      <button class="btn-primary--round" [disabled]="form.invalid">
+        <fa-icon [icon]="plusIcon"></fa-icon>
+      </button>
+    </div>
+  </div>
+</form>

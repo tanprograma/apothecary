@@ -1,0 +1,34 @@
+.request-status {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 90%;
+}
+.request-status--success {
+  background-color: aqua;
+  opacity: 50%;
+}
+.request-status--failure {
+  background-color: rgb(201, 80, 28);
+  opacity: 50%;
+}
+.message {
+  margin-bottom: 10px;
+}
+.stack-top {
+  // sits on top of stack
+  position: absolute;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  top: 0;
+}
+.opacity-50 {
+  // sets opaqueness
+  position: relative;
+  opacity: 50%;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}

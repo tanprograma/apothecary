@@ -1,0 +1,20 @@
+<div class="stack-top">
+  <!-- sits on top of the stack -->
+  <div class="opaque-50">
+    <!-- sets the opaqueness of the container -->
+    <div class="allert-container flex flex-center">
+      <div class="div-allert">
+        <p class="message text-center">
+          {{
+            !!reqState.notification.message
+              ? reqState.notification.message
+              : "loading..."
+          }}
+        </p>
+        <div class="loader-container">
+          <div class="loader loading"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

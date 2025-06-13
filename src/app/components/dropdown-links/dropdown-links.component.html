@@ -1,0 +1,35 @@
+@if (open==true) {
+<details open class="component">
+  <!-- create links -->
+  <summary>{{ title }}</summary>
+
+  <ul>
+    @for (item of links; track $index) {
+    <li>
+      <a
+        [routerLink]="[item.url]"
+        [class.selected-link]="item.url == document.location.pathname"
+        >{{ item.name }}</a
+      >
+    </li>
+    }
+  </ul>
+</details>
+}@else{
+<details class="component">
+  <!-- create links -->
+  <summary>{{ title }}</summary>
+
+  <ul>
+    @for (item of links; track $index) {
+    <li>
+      <a
+        [routerLink]="[item.url]"
+        [class.selected-link]="item.url == document.location.pathname"
+        >{{ item.name }}</a
+      >
+    </li>
+    }
+  </ul>
+</details>
+}

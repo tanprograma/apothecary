@@ -1,0 +1,92 @@
+<div class="page">
+  <div class="component">
+    <h2 class="text-center">users management</h2>
+  </div>
+  <form class="component" [formGroup]="form" (ngSubmit)="submit()">
+    <h3 class="text-center">create user</h3>
+    <div class="component flex flex-center">
+      <div class="control">
+        <input
+          type="text"
+          name="firstname"
+          id="firstname"
+          placeholder="firstname"
+          autocomplete="off"
+          formControlName="firstname"
+          class="input-primary"
+        />
+      </div>
+      <div class="control">
+        <input
+          type="text"
+          name="lastname"
+          id="firstname"
+          placeholder="lastname"
+          autocomplete="off"
+          formControlName="lastname"
+          class="input-primary"
+        />
+      </div>
+      <div class="control">
+        <input
+          type="email"
+          name="email"
+          id="firstname"
+          placeholder="email"
+          autocomplete="off"
+          formControlName="email"
+          class="input-primary"
+        />
+      </div>
+      <div class="control">
+        <input
+          type="text"
+          name="password"
+          id="password"
+          placeholder="password"
+          autocomplete="off"
+          formControlName="password"
+          class="input-primary"
+        />
+      </div>
+      <div class="control">
+        <select
+          name="role"
+          id="role"
+          formControlName="role"
+          class="input-primary"
+        >
+          <option value="" selected disabled>select role</option>
+
+          <option value="admin">admin</option>
+          <option value="other">other</option>
+        </select>
+      </div>
+      <div class="control">
+        <button class="btn-primary--round" [disabled]="form.invalid">
+          <fa-icon [icon]="plusIcon"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </form>
+  <table class="component">
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>firstname</th>
+        <th>lastname</th>
+        <th>role</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of usersStore.users(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.firstname }}</td>
+        <td>{{ item.lastname }}</td>
+        <td>{{ item.role }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

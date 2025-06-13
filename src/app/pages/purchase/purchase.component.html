@@ -1,0 +1,19 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;purchases
+    </h2>
+  </div>
+  <purchase-form />
+
+  <div class="transactions">
+    @for (request of transferStore.displayedPurchases(); track $index) { @if
+    (!request.completed &&
+    outletStore.selectedStore()?.name==request.destination) {
+    <purchase-receive [request]="request"></purchase-receive>
+
+    }@else {
+    <purchase-view [request]="request"></purchase-view>
+    } }
+  </div>
+</div>

@@ -1,0 +1,36 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { OutletsStore } from '../../app-stores/outlet.store';
+import { InventoriesStore } from '../../app-stores/inventory.store';
+import { SaleStore } from '../../app-stores/sale.store';
+import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown-links.component';
+
+@Component({
+  selector: 'shop',
+  imports: [RouterOutlet, DropdownLinksComponent],
+  templateUrl: './shop.component.html',
+  styleUrl: './shop.component.scss',
+})
+export class ShopComponent implements OnInit {
+  route = inject(ActivatedRoute);
+  outletStore = inject(OutletsStore);
+  inventoryStore = inject(InventoriesStore);
+  salesStore = inject(SaleStore);
+  ngOnInit(): void {
+    this.initializeStore();
+  }
+  initializeStore() {
+    this.setSelectedStore();
+    this.getResources();
+  }
+  setSelectedStore() {
+    const name = this.route.snapshot.paramMap.get('name') as string;
+    const id = this.route.snapshot.paramMap.get('id') as string;
+    this.outletStore.setSelectedStore({ name, _id: id });
+  }
+  getResources() {
+    Promise.all([
+      this.inventoryStore.getInventory(this.outletStore.selectedStore()?._id),
+    ]).then((res) => console.log('done'));
+  }
+}

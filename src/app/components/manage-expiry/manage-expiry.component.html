@@ -1,0 +1,20 @@
+<form class="" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="component flex flex-center">
+    <div class="control">
+      <input
+        type="date"
+        name="expiry"
+        id="expiry"
+        formControlName="expiry"
+        placeholder="expiry date"
+        class="input-primary"
+      />
+    </div>
+
+    <div class="control">
+      <button class="btn-primary--round" [disabled]="form.invalid">
+        <fa-icon [icon]="plusIcon"></fa-icon>
+      </button>
+    </div>
+  </div>
+</form>

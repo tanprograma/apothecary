@@ -1,0 +1,63 @@
+<div class="component">
+  <div
+    class="flex flex-center summary"
+    [class.issued]="request.completed"
+    [class.pending]="!request.completed"
+  >
+    <!-- conditional classes is for information only -->
+    <div class="flex-10">
+      <fa-icon
+        [icon]="envelopIcon"
+        [class.is-destination]="
+          request.destination == outletStore.selectedStore()?.name
+        "
+        [class.is-source]="request.source == outletStore.selectedStore()?.name"
+      ></fa-icon>
+    </div>
+    <div class="flex-30">
+      {{ request.createdAt }}
+    </div>
+    <div class="flex-50">
+      {{ request.products.length }} &nbsp; from &nbsp;{{
+        request.source
+      }}
+      &nbsp;to &nbsp;{{ request.destination }}
+    </div>
+    <div class="flex-10">
+      <button class="btn-primary--round" (click)="toggleMore()">
+        <fa-icon [icon]="showMore ? lessIcon : moreIcon"></fa-icon>
+      </button>
+      <sup>{{ request.products.length }}</sup>
+      <!-- &nbsp;item(s) -->
+    </div>
+  </div>
+  @if (showMore) {
+  <table>
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>product</th>
+        <th>unit</th>
+        <th>requested</th>
+        <th>issued</th>
+        <!-- <th>amount</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of request.products; track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+
+        <td>{{ item.product }}</td>
+        <td>{{ item.unit }}</td>
+        <td>{{ item.requested }}</td>
+
+        <td>{{ item.received }}</td>
+
+        <!-- <td>{{ request.quantity * request.price | currency : "Tzs" }}</td> -->
+      </tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>

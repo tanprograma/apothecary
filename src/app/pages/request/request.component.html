@@ -1,0 +1,19 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;requests
+    </h2>
+  </div>
+  <request-form />
+
+  <div class="transactions">
+    @for (request of transferStore.displayedRequests(); track $index) { @if
+    (!request.completed && outletStore.selectedStore()?.name==request.source) {
+    <request-issue [request]="request"></request-issue>
+
+    }@else {}
+    <request-view [request]="request"></request-view>
+
+    }
+  </div>
+</div>

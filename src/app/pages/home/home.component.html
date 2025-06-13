@@ -1,0 +1,24 @@
+<div class="page">
+  <div class="container menu">
+    <dropdown-links
+      [title]="'stores'"
+      [links]="outletStore.storeLinks()"
+      [open]="true"
+    />
+    <dropdown-links
+      [title]="'statistics'"
+      [links]="statisticsLinks"
+      [open]="true"
+    />
+
+    @if (isAdmin()) {
+    <dropdown-links
+      [links]="[{ name: 'admin', url: '/admin' }]"
+      [title]="'app links'"
+    ></dropdown-links>
+    }
+  </div>
+  <main class="container main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

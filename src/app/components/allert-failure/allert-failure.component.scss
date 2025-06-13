@@ -1,0 +1,14 @@
+.allert-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  cursor: not-allowed;
+}
+.div-allert {
+  background-color: red;
+  color: white;
+
+  padding: 10px;
+
+  border-radius: 5px;
+}
