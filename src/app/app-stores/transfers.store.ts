@@ -114,7 +114,7 @@ export const RequestsStore = signalStore(
           const res = await requestService.getStoreRequests(storeID, options);
 
           logger.log('requests fetched');
-          console.log(res[0]);
+          console.log(res);
           patchState(store, (state) => ({
             ...state,
             requests: res,
@@ -144,6 +144,7 @@ export const RequestsStore = signalStore(
           // adds to sales
           logger.log('request posted successfully');
           const { date, time } = dateService.parseDate(result.createdAt);
+          console.log(`${date} ${time}`);
           patchState(store, (state) => {
             // adds
             return {
@@ -152,13 +153,12 @@ export const RequestsStore = signalStore(
                 {
                   ...result,
                   products: state.cart,
-
-                  createdAt: `${date} ${time}`,
                 },
                 ...state.requests,
               ],
             };
           });
+
           // restore the cart
           patchState(store, (state) => ({ ...state, cart: [] }));
         }

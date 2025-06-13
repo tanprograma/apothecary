@@ -143,11 +143,13 @@ export const PurchasesStore = signalStore(
       },
       async postPurchase(sale: Partial<IPurchase>) {
         const { status, result } = await purchaseService.postPurchase(sale);
-        console.log({ result, status });
+        // console.log({ result, status });
         if (!!result) {
           // adds to sales
           logger.log('request posted successfully');
+
           const { date, time } = dateService.parseDate(result.createdAt);
+          // console.log({ date, time });
           patchState(store, (state) => {
             // adds
             return {
@@ -156,8 +158,6 @@ export const PurchasesStore = signalStore(
                 {
                   ...result,
                   products: state.cart,
-
-                  createdAt: `${date} ${time}`,
                 },
                 ...state.purchases,
               ],

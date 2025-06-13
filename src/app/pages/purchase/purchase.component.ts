@@ -4,6 +4,7 @@ import { OutletsStore } from '../../app-stores/outlet.store';
 import { PurchaseFormComponent } from '../../components/purchase-form/purchase-form.component';
 import { PurchaseReceiveComponent } from '../../components/purchase-receive/purchase-receive.component';
 import { PurchaseViewComponent } from '../../components/purchase-view/purchase-view.component';
+import { SupplierStore } from '../../app-stores/supplier.store';
 
 @Component({
   selector: 'purchase',
@@ -17,9 +18,23 @@ import { PurchaseViewComponent } from '../../components/purchase-view/purchase-v
 })
 export class PurchaseComponent {
   outletStore = inject(OutletsStore);
+  supplierStore = inject(SupplierStore);
   transferStore = inject(PurchasesStore);
   ngOnInit(): void {
+    // this.initialize();
     this.getRequests();
+  }
+  initialize() {
+    Promise.all([
+      this.transferStore.getStorePurchases(
+        this.outletStore.selectedStore()?._id as string,
+        {}
+      ),
+      this.supplierStore.getStores(),
+      this.outletStore.getStores(),
+    ]).then((res) => {
+      console.log('purchase page initiliazed');
+    });
   }
   getRequests() {
     this.transferStore

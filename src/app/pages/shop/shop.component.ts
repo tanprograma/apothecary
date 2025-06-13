@@ -4,6 +4,7 @@ import { OutletsStore } from '../../app-stores/outlet.store';
 import { InventoriesStore } from '../../app-stores/inventory.store';
 import { SaleStore } from '../../app-stores/sale.store';
 import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown-links.component';
+import { SupplierStore } from '../../app-stores/supplier.store';
 
 @Component({
   selector: 'shop',
@@ -14,6 +15,7 @@ import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown
 export class ShopComponent implements OnInit {
   route = inject(ActivatedRoute);
   outletStore = inject(OutletsStore);
+  supplierStore = inject(SupplierStore);
   inventoryStore = inject(InventoriesStore);
   salesStore = inject(SaleStore);
   ngOnInit(): void {
@@ -31,6 +33,8 @@ export class ShopComponent implements OnInit {
   getResources() {
     Promise.all([
       this.inventoryStore.getInventory(this.outletStore.selectedStore()?._id),
-    ]).then((res) => console.log('done'));
+      this.outletStore.getStores(),
+      this.supplierStore.getStores(),
+    ]).then((res) => console.log('initialized resources'));
   }
 }

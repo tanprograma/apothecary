@@ -82,21 +82,20 @@ export class SaleFormComponent {
   }
   addToCart() {
     // adds to cart
-    {
-      this.salesStore.addToCart({
-        product: this.saleForm.value.product ?? '',
-        unit: this.saleForm.value.unit ?? '',
-        price: this.getPrice(this.saleForm.value.unit ?? ''),
-        unit_value: this.getUnitValue(this.saleForm.value.unit ?? ''),
-        quantity: this.saleForm.value.quantity ?? 0,
-      });
-      this.units = [];
-      this.saleForm.patchValue({
-        product: '',
-        quantity: 0,
-        unit: '',
-      });
-    }
+
+    this.salesStore.addToCart({
+      product: this.saleForm.value.product ?? '',
+      unit: this.saleForm.value.unit ?? '',
+      price: this.getPrice(this.saleForm.value.unit ?? ''),
+      unit_value: this.getUnitValue(this.saleForm.value.unit ?? ''),
+      quantity: this.saleForm.value.quantity ?? 0,
+    });
+    this.units = [];
+    this.saleForm.patchValue({
+      product: '',
+      quantity: 0,
+      unit: '',
+    });
   }
   removeFromCart(cartItem: ISaleItem) {
     this.salesStore.removeFromCart(cartItem);

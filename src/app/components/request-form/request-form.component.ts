@@ -86,22 +86,21 @@ export class RequestFormComponent {
   }
   addToCart() {
     // adds to cart
-    {
-      this.requestStore.cart().push({
-        product: this.requestForm.value.product ?? '',
-        unit: this.requestForm.value.unit ?? '',
-        price: this.getPrice(this.requestForm.value.unit ?? ''),
-        unit_value: this.getUnitValue(this.requestForm.value.unit ?? ''),
-        requested: this.requestForm.value.requested ?? 0,
-        received: 0,
-      });
-      this.units = [];
-      this.requestForm.patchValue({
-        product: '',
-        requested: 0,
-        unit: '',
-      });
-    }
+
+    this.requestStore.addToCart({
+      product: this.requestForm.value.product ?? '',
+      unit: this.requestForm.value.unit ?? '',
+      price: this.getPrice(this.requestForm.value.unit ?? ''),
+      unit_value: this.getUnitValue(this.requestForm.value.unit ?? ''),
+      requested: this.requestForm.value.requested ?? 0,
+      received: 0,
+    });
+    this.units = [];
+    this.requestForm.patchValue({
+      product: '',
+      requested: 0,
+      unit: '',
+    });
   }
   removeFromCart(cartItem: IRequestItem) {
     this.requestStore.removeFromCart(cartItem);
