@@ -5,12 +5,12 @@ import { User } from '../../interfaces/user';
 import { Store } from '../../interfaces/store';
 import { isPlatformBrowser } from '@angular/common';
 import { UsersStore } from '../../app-stores/users.store';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -26,11 +26,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.usersStore.restoreSession();
   }
-  login() {
-    // const user: Partial<User> = {
-    //   email: this.loginForm.value.email ?? '',
-    //   password: this.loginForm.value.password ?? '',
-    // };
-    // return this.usersStore.login(user);
+  async login() {
+    const user: Partial<User> = {
+      email: this.loginForm.value.email ?? '',
+      password: this.loginForm.value.password ?? '',
+    };
+    return this.usersStore.login(user);
   }
 }

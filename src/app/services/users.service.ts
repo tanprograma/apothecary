@@ -45,21 +45,24 @@ export class UsersService {
     return res;
   }
   async login(payload: Partial<User>) {
-    // this.notificationService.updateNotification({
-    //   message: 'logging in..',
-    //   loading: true,
-    // });
+    this.notificationService.updateNotification({
+      message: 'logging in..',
+      loading: true,
+    });
     const api = `${this.origin}/api/users/login`;
-    return this.http.post<Partial<User>, PostResponse<User>>(api, payload);
-    // if (!!res.status) {
-    //   this.notificationService.reset();
-    // } else {
-    //   this.notificationService.updateNotification({
-    //     status: false,
-    //     message: 'login failed',
-    //   });
-    // }
-    // return res;
+    const res = await this.http.post<Partial<User>, PostResponse<User>>(
+      api,
+      payload
+    );
+    if (!!res.status) {
+      this.notificationService.reset();
+    } else {
+      this.notificationService.updateNotification({
+        status: false,
+        message: 'login failed',
+      });
+    }
+    return res;
   }
   getSession(): { status: boolean; user?: Partial<User> } {
     if (isPlatformBrowser(this.appID)) {

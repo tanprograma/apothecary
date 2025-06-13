@@ -49,24 +49,14 @@ export const UsersStore = signalStore(
         }
       },
       async login(payload: Partial<User>) {
-        notificationService.updateNotification({
-          loading: true,
-          message: 'logging in..',
-        });
         const { status, result } = await usersService.login(payload);
         if (!!result) {
           patchState(store, (state) => ({
             ...state,
             loggedUser: result,
           }));
-          notificationService.reset();
+
           usersService.setSession(result);
-          usersService.router.navigate(['/home']);
-        } else {
-          notificationService.updateNotification({
-            status: false,
-            message: 'could not log in',
-          });
         }
       },
       logOut() {

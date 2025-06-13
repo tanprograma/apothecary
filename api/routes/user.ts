@@ -31,11 +31,12 @@ router.post('/login', async (req, res) => {
         role: user.role,
       };
       res.send({ status: isUser, result: result });
+    } else {
+      res.send({ status: false });
     }
+  } else {
     res.send({ status: false });
   }
-
-  res.send({ status: false });
 });
 router.post('/create', async (req, res) => {
   try {

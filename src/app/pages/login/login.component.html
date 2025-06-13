@@ -1,4 +1,5 @@
 <div class="page flex flex-center">
+  @if (!usersStore.loggedUser()) {
   <form
     class="login-form component flex flex-center"
     [formGroup]="loginForm"
@@ -30,4 +31,10 @@
       </div>
     </div>
   </form>
+  }@else {
+  <div class="component">
+    login successfull.
+    <a class="link" [routerLink]="['/home']">continue to app</a>
+  </div>
+  }
 </div>
