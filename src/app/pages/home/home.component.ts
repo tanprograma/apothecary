@@ -18,9 +18,9 @@ export class HomeComponent implements OnInit {
   // storeLinks: { url: string; name: string }[] = [];
   statisticsLinks: { name: string; url: string }[] = [
     // { name: 'summary', url: '/home/summary-statistics' },
-    { name: 'dispensed-statistics', url: '/home/dispensed-statistics' },
-    { name: 'purchased-statistics', url: '/home/purchased-statistics' },
-    { name: 'inventory-statistics', url: '/home/inventory-statistics' },
+    { name: 'sales', url: '/home/sales-statistics' },
+    { name: 'purchases', url: '/home/purchases-statistics' },
+    { name: 'inventories', url: '/home/inventory-statistics' },
   ];
   ngOnInit(): void {
     // if (this.shopService.getCurrentUser() != undefined) {
@@ -30,13 +30,7 @@ export class HomeComponent implements OnInit {
     // }
     this.getStores().then((_) => {});
   }
-  configureStoreLinks() {
-    // this.shopService.getStores().subscribe((stores) => {
-    //   this.storeLinks = stores.map((store) => {
-    //     return { url: `/shop/${store.name}/${store._id}`, name: store.name };
-    //   });
-    // });
-  }
+
   isAdmin() {
     return true;
     // return (this.shopService.getCurrentUser() as User).role == 'admin';

@@ -73,6 +73,7 @@ export class PurchaseUtil {
       return {
         ...item,
         requested: Math.ceil(item.requested / item.unit_value),
+        received: Math.ceil(item.received / item.unit_value),
       };
     });
   }

@@ -97,8 +97,8 @@ export const InventoriesStore = signalStore(
       async getInventorySummary(options: { [key: string]: any }) {
         try {
           const res = await inventoryService.getInventoriesSummary(options);
-          console.log(res[0]);
-          logger.log('inventory summary fetched');
+          // console.log(res[0]);
+          // logger.log('inventory summary fetched');
           patchState(store, (state) => ({ ...state, inventorySummary: res }));
         } catch (error) {
           logger.log((error as { message: string }).message);

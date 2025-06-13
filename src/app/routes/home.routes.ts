@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
+import { SalesStatisticsComponent } from '../pages/sales-statistics/sales-statistics.component';
+import { InventoryStatisticsComponent } from '../pages/inventory-statistics/inventory-statistics.component';
+import { PurchasesStatisticsComponent } from '../pages/purchases-statistics/purchases-statistics.component';
 
-// import { AllPurchasesComponent } from '../pages/all-purchases/all-purchases.component';
-// import { AllInventoryComponent } from '../pages/all-inventory/all-inventory.component';
-// import { AllDispensedComponent } from '../pages/all-dispensed/all-dispensed.component';
 export const routes: Routes = [
-  // { path: '', pathMatch: 'full', redirectTo: '/home/dispensed-statistics' },
-  // { path: 'dispensed-statistics', component: AllDispensedComponent },
-  // { path: 'purchased-statistics', component: AllPurchasesComponent },
-  // { path: 'inventory-statistics', component: AllInventoryComponent },
+  { path: '', pathMatch: 'full', redirectTo: '/home/sales-statistics' },
+  { path: 'sales-statistics', component: SalesStatisticsComponent },
+  { path: 'purchases-statistics', component: PurchasesStatisticsComponent },
+  { path: 'inventory-statistics', component: InventoryStatisticsComponent },
 ];

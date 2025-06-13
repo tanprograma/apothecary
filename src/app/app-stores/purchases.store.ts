@@ -16,8 +16,8 @@ export type PurchaseSummary = {
   product: string;
   unit: string;
   unit_value: number;
-  quantity: number;
-  price: number;
+  requested: number;
+  received: number;
 };
 
 export interface IPurchaseItem {
@@ -81,7 +81,8 @@ export const PurchasesStore = signalStore(
             } else {
               return true;
             }
-          });
+          })
+          .filter((item) => item.requested > 0);
       }),
       displayedPurchases: computed(() => {
         //   get sales summary
@@ -104,7 +105,8 @@ export const PurchasesStore = signalStore(
           const res = await purchaseService.getPurchasesSummary(options);
 
           logger.log('purchase summary fetched');
-          patchState(store, (state) => ({ ...state, purchasesSummary: res }));
+
+          patchState(store, (state) => ({ ...state, summary: res }));
         } catch (error) {
           logger.log((error as { message: string }).message);
         }
