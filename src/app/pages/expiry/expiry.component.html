@@ -1,0 +1,40 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;expired materials
+    </h2>
+  </div>
+  <expiry-form />
+
+  <div class="component data-frames">
+    <div class="component flex">
+      <!-- headers of the table -->
+      <div class="sn flex-10">sn</div>
+
+      <div class="expiry flex-30">product</div>
+      <div class="expiry flex-10">unit</div>
+      <div class="expiry flex-10">quantity</div>
+      <div class="expiry flex-20">amount</div>
+      <div class="expiry flex-10">expiry</div>
+      <div class="expiry flex-10">destroyed</div>
+    </div>
+    @for (item of expiryStore.displayedExpired(); track $index) {
+    <div class="component flex data-frame">
+      <div class="sn flex-10">{{ $index + 1 }}</div>
+
+      <div class="expiry flex-30">{{ item.product }}</div>
+      <div class="expiry flex-10">{{ item.unit }}</div>
+      <div class="expiry flex-10">{{ item.quantity }}</div>
+      <div class="expiry flex-20">
+        {{ item.quantity * item.price | currency : "Tzs" }}
+      </div>
+      <div class="expiry flex-10">
+        {{ item.expiry }}
+      </div>
+      <div class="expiry flex-10">
+        {{ item.destroyed ? "destroyed" : "pending" }}
+      </div>
+    </div>
+    }
+  </div>
+</div>

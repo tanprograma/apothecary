@@ -76,7 +76,7 @@ app.use('/api/requests', requests);
 app.use('/api/purchases', purchases);
 app.use('/api/suppliers', suppliers);
 app.use('/api/users', users);
-app.use('/api/expired', expired);
+app.use('/api/expiry', expired);
 
 /**
  * Handle all other requests by rendering the Angular application.

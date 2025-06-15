@@ -30,6 +30,10 @@ const shopLinks: {
     name: 'purchase',
     url: `purchase`,
   },
+  {
+    name: 'expired',
+    url: `expiry`,
+  },
 
   {
     name: 'manage inventory',

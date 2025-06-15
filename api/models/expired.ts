@@ -1,12 +1,14 @@
 import { Schema, model } from 'mongoose';
-import { Expired } from '../../src/app/interfaces/expired';
+import { Expiry } from '../../src/app/app-stores/expiry.store';
 
-const schema = new Schema<Expired>({
-  name: { type: String, lowercase: true },
-  product_id: String,
+const schema = new Schema<Expiry<string, string>>({
+  store: String,
+  quantity: Number,
   unit: String,
-  quantity: String,
-  expiry: Date,
-  status: { type: Boolean, default: () => false },
+  unit_value: Number,
+  price: Number,
+  product: String,
+  expiry: String,
+  destroyed: Boolean,
 });
 export const ExpiredModel = model('Expired', schema);

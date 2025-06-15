@@ -1,0 +1,87 @@
+<form class="component" [formGroup]="saleForm" (ngSubmit)="addExpiry()">
+  <div class="component flex flex-center">
+    <div class="control">
+      <input
+        type="date"
+        name="expiry"
+        id="expiry"
+        formControlName="expiry"
+        class="input-primary"
+      />
+    </div>
+    <div class="control">
+      <input
+        list="inventories"
+        id="product"
+        name="product"
+        placeholder="product name"
+        autocomplete="off"
+        formControlName="product"
+        class="input-primary"
+        (change)="setUnits()"
+      />
+      <datalist id="inventories">
+        @for (item of inventoriesStore.inventory(); track $index) {
+        <option [value]="item.product.name">
+          {{ item.product.name }}
+        </option>
+        }
+      </datalist>
+    </div>
+    <div class="control">
+      <select
+        class="input-primary"
+        name="unit"
+        id="unit"
+        formControlName="unit"
+      >
+        <option value="" selected disabled>select unit</option>
+        @for (item of units; track $index) {
+        <option [value]="item.name">{{ item.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="control">
+      <input
+        type="number"
+        name="quantity"
+        id="quantity"
+        formControlName="quantity"
+        class="input-primary"
+      />
+    </div>
+    <div class="control">
+      <button class="btn-primary--round" [disabled]="saleForm.invalid">
+        <fa-icon [icon]="plusIcon"></fa-icon>
+      </button>
+    </div>
+  </div>
+</form>
+<!-- <div class="component items-in-cart">
+  <div class="flex flex-center">
+    <div class="informatique">
+      {{ salesStore.cart().length }} &nbsp; <span class="">items</span>
+    </div>
+    <div class="informatique">
+      {{ getValue() | currency : "TZS" }}
+    </div>
+    <button class="btn-primary" (click)="toggleCart()">
+      <fa-icon [icon]="showMoreItems ? angleUp : angleDown"></fa-icon> &nbsp;
+      {{ showMoreItems ? "less" : "more" }}
+    </button>
+  </div>
+  @if (showMoreItems) {
+  <cart [cartItems]="salesStore.cart()" (onRemove)="removeFromCart($event)" />
+  }
+</div> -->
+<!-- @if (salesStore.cart().length>0) {
+<div class="component flex flex-center">
+  <button
+    class="btn-primary"
+    (click)="dispense()"
+    [disabled]="salesStore.cart().length == 0"
+  >
+    DISPENSE
+  </button>
+</div>
+} -->
