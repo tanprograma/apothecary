@@ -23,6 +23,10 @@ router.post('/create', async (req, res) => {
         return { unit: p.name, value: 1 };
       }),
       quantity: 0,
+      salesInfo: { items: 0, quantity: 0, amount: 0 },
+      purchasesInfo: { items: 0, quantity: 0, amount: 0 },
+      issueInfo: { items: 0, quantity: 0, amount: 0 },
+      receiveInfo: { items: 0, quantity: 0, amount: 0 },
     });
   }
   res.send({ result: item, status: true });
@@ -41,6 +45,10 @@ router.post('/createmany', async (req, res) => {
           return { unit: p.name, value: 1 };
         }),
         quantity: 0,
+        salesInfo: { items: 0, quantity: 0, amount: 0 },
+        purchasesInfo: { items: 0, quantity: 0, amount: 0 },
+        issueInfo: { items: 0, quantity: 0, amount: 0 },
+        receiveInfo: { items: 0, quantity: 0, amount: 0 },
       });
     }
   }

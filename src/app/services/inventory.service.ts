@@ -1,5 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { IInventory, InventorySummary } from '../app-stores/inventory.store';
+import {
+  IInventory,
+  Info,
+  InfoSummary,
+  InventorySummary,
+} from '../app-stores/inventory.store';
 import { HttpService } from './http.service';
 import { OriginService } from './origin.service';
 import { IStore } from '../app-stores/outlet.store';
@@ -21,6 +26,16 @@ export class InventoryService {
     const api = `${this.origin}/api/inventories?${parsedOptions}`;
     return this.http.get<InventorySummary[]>(api);
   }
+
+  async getInfo() {
+    // let parsedOptions = '';
+    // for (let key of Object.keys(options)) {
+    //   parsedOptions += `${key}=${options[key]}&&`;
+    // }
+    const api = `${this.origin}/api/info`;
+    return this.http.get<Info[]>(api);
+  }
+
   async getInventory(storeID: string) {
     const api = `${this.origin}/api/inventories/store/${storeID}`;
     return this.http.get<IInventory<Product, IStore>[]>(api);

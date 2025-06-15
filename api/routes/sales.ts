@@ -6,6 +6,7 @@ import { ProductModel } from '../models/product';
 import { StoreModel } from '../models/store';
 import { SaleUtil } from '../utilities/sale.util';
 import { sell } from '../models/inventory';
+import { addSaleInfo } from '../models/info.model';
 const router = Express.Router();
 router.get('/', async (req, res) => {
   const query = req.query;
@@ -19,6 +20,12 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.send([]);
   }
+});
+router.get('/info', async (req, res) => {
+  // const { store } = req.query;
+  // const filter = !!store ? { store: store as string } : {};
+  // const query = await SaleModel.countDocuments(filter);
+  // res.send({ query });
 });
 router.get('/count', async (req, res) => {
   const { store } = req.query;
@@ -56,6 +63,7 @@ router.get('/store/:id/summary', async (req, res) => {
 });
 router.post('/create', async (req, res) => {
   const sale = await SaleModel.create(req.body);
+  await addSaleInfo(sale);
   for (let item of sale.products) {
     await sell(item, sale.store);
   }
@@ -66,10 +74,14 @@ router.post('/create', async (req, res) => {
 });
 router.post('/migrate', async (req, res) => {
   const sale = await SaleModel.create(req.body);
+  await addSaleInfo(sale);
   res.send(sale);
 });
 router.post('/createmany', async (req, res) => {
-  const sales = await SaleModel.create(req.body);
+  const sales: any = await SaleModel.create(req.body);
+  for (let sale of sales) {
+    await addSaleInfo(sale);
+  }
   res.send({ status: true, result: sales });
 });
 router.patch('/change-date', async (req, res) => {

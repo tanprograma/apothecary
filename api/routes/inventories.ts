@@ -12,6 +12,7 @@ router.get('', async (req, res) => {
   );
   res.send(new InventoryUtil(data).summary());
 });
+
 router.get('/store/:id', async (req, res) => {
   const query = req.query;
   const data = await InventoryUtil.find(

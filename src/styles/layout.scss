@@ -46,6 +46,9 @@
   padding: 5px;
   border-radius: 10px;
 }
+.grow {
+  flex: 1 1 auto;
+}
 .flex {
   display: flex;
   flex-wrap: wrap;
@@ -74,6 +77,9 @@
 .flex-center {
   justify-content: center;
   align-items: center;
+}
+.flex-column {
+  flex-direction: column;
 }
 .flex-5 {
   flex: 0 1 5%;

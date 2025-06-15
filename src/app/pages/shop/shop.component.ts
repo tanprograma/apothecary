@@ -5,6 +5,7 @@ import { InventoriesStore } from '../../app-stores/inventory.store';
 import { SaleStore } from '../../app-stores/sale.store';
 import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown-links.component';
 import { SupplierStore } from '../../app-stores/supplier.store';
+import { UsersStore } from '../../app-stores/users.store';
 
 @Component({
   selector: 'shop',
@@ -17,13 +18,18 @@ export class ShopComponent implements OnInit {
   outletStore = inject(OutletsStore);
   supplierStore = inject(SupplierStore);
   inventoryStore = inject(InventoriesStore);
+  userStore = inject(UsersStore);
   salesStore = inject(SaleStore);
   ngOnInit(): void {
     this.initializeStore();
   }
   initializeStore() {
-    this.setSelectedStore();
-    this.getResources();
+    if (this.authenticate()) {
+      this.setSelectedStore();
+      this.getResources();
+    } else {
+      this.userStore.routeToLogin();
+    }
   }
   setSelectedStore() {
     const name = this.route.snapshot.paramMap.get('name') as string;
@@ -36,5 +42,8 @@ export class ShopComponent implements OnInit {
       this.outletStore.getStores(),
       this.supplierStore.getStores(),
     ]).then((res) => console.log('initialized resources'));
+  }
+  authenticate() {
+    return this.userStore.authenticated();
   }
 }

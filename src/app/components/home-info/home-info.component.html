@@ -1,0 +1,35 @@
+<div
+  class="component"
+  [class.sales]="info.category == 'sales'"
+  [class.purchases]="info.category == 'purchases'"
+  [class.receive]="info.category == 'receive'"
+  [class.issue]="info.category == 'issue'"
+>
+  <h2 class="text-center">{{ info.category }} &nbsp; info</h2>
+  <div class="flex flex-center">
+    <div class="grow">
+      <informatique
+        [info]="{
+          title: 'orders',
+          content: info.orders + ' +'
+        }"
+      />
+    </div>
+    <div class="grow">
+      <informatique
+        [info]="{
+          title: 'items',
+          content: info.items + ' +'
+        }"
+      />
+    </div>
+    <div class="grow">
+      <informatique
+        [info]="{
+          title: 'amount',
+          content: info.amount + ' tzs'
+        }"
+      />
+    </div>
+  </div>
+</div>

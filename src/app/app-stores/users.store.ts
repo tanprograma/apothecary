@@ -72,6 +72,13 @@ export const UsersStore = signalStore(
             loggedUser: user,
           }));
         }
+        return status;
+      },
+      authenticated() {
+        return !!this.restoreSession();
+      },
+      routeToLogin() {
+        usersService.router.navigate(['/login']);
       },
     })
   )

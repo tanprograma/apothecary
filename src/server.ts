@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 import products from '../api/routes/products';
 import inventories from '../api/routes/inventories';
+import info from '../api/routes/info.api';
 import stores from '../api/routes/stores';
 import sales from '../api/routes/sales';
 import units from '../api/routes/units';
@@ -67,6 +68,7 @@ app.use(express.json());
 app.use('/api/products', products);
 app.use('/api/stores', stores);
 app.use('/api/inventories', inventories);
+app.use('/api/info', info);
 app.use('/api/sales', sales);
 app.use('/api/units', units);
 // app.use('/api/categories', categories);

@@ -1,4 +1,9 @@
-import { InventorySummary } from '../../src/app/app-stores/inventory.store';
+import {
+  IInventory,
+  Info,
+  InfoSummary,
+  InventorySummary,
+} from '../../src/app/app-stores/inventory.store';
 
 class Summary {
   [product: string]: InventorySummary;
@@ -21,6 +26,7 @@ export class InventoryUtil {
     }
     return summary;
   }
+
   transform() {
     return this.DB.prescriptions.map((prescription) => {
       return this.mapPrescription(prescription);
@@ -75,6 +81,7 @@ export class InventoryUtil {
       amount: (found.amount as number) + this.getInventoryItemValue(item),
     };
   }
+
   getInventoryItemValue(inventoryItem: any) {
     //   returns the value of inventory
     const smallestPrice = this.findSmallestPrice(inventoryItem.prices).value;

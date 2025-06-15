@@ -7,14 +7,19 @@ import { RenderMode } from '@angular/ssr';
 import { ShopComponent } from './pages/shop/shop.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { LoginComponent } from './pages/login/login.component';
+import { StatisticsComponent } from './pages/statistics/statistics.component';
 
 export const routes: Routes = [
-  // { path: '', pathMatch: 'full', redirectTo: '/home' },
+  { path: '', pathMatch: 'full', redirectTo: '/home' },
   {
     path: 'home',
     component: HomeComponent,
+  },
+  {
+    path: 'statistics',
+    component: StatisticsComponent,
     loadChildren: () =>
-      import('./routes/home.routes').then((mod) => mod.routes),
+      import('./routes/statistics.routes').then((mod) => mod.routes),
   },
   { path: 'login', component: LoginComponent },
   {

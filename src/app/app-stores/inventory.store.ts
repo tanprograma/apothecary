@@ -31,6 +31,13 @@ export type InventorySummary = {
 //   unit_value: number;;oa
 //   price: number;
 // }
+export interface Info {
+  _id: string;
+  category: string;
+  items: number;
+  orders: number;
+  amount: number;
+}
 export interface IInventory<
   T extends Product | string,
   K extends IStore | string
@@ -41,10 +48,22 @@ export interface IInventory<
   quantity: number;
   prices: { unit: string; value: number }[];
   expiry: string;
+  salesInfo: Info;
+  purchasesInfo: Info;
+  issueInfo: Info;
+  receiveInfo: Info;
+}
+export interface InfoSummary {
+  sales: Info;
+  purchases: Info;
+  receive: Info;
+  issue: Info;
 }
 type InventoryState = {
   inventorySummary: InventorySummary[];
   inventory: IInventory<Product, IStore>[];
+  infos: Info[];
+
   selectedInventory: null | IInventory<Product, IStore>;
   isLoading: boolean;
   filter: { product: string; category: string };
@@ -53,6 +72,8 @@ const initialState: InventoryState = {
   inventorySummary: [],
   selectedInventory: null,
   inventory: [],
+  infos: [],
+
   isLoading: false,
   filter: { product: '', category: '' },
 };
@@ -80,6 +101,22 @@ export const InventoriesStore = signalStore(
             }
           });
       }),
+      salesInfo: computed(() => {
+        //   get sales summary
+        return state.infos().find((item) => item.category == 'sales');
+      }),
+      purchasesInfo: computed(() => {
+        //   get sales summary
+        return state.infos().find((item) => item.category == 'purchases');
+      }),
+      issueInfo: computed(() => {
+        //   get sales summary
+        return state.infos().find((item) => item.category == 'issue');
+      }),
+      receiveInfo: computed(() => {
+        //   get sales summary
+        return state.infos().find((item) => item.category == 'receive');
+      }),
     };
   }),
   withMethods(
@@ -100,6 +137,16 @@ export const InventoriesStore = signalStore(
           // console.log(res[0]);
           // logger.log('inventory summary fetched');
           patchState(store, (state) => ({ ...state, inventorySummary: res }));
+        } catch (error) {
+          logger.log((error as { message: string }).message);
+        }
+      },
+      async getInfoSummary() {
+        try {
+          const res = await inventoryService.getInfo();
+
+          // logger.log('inventory summary fetched');
+          patchState(store, (state) => ({ ...state, infos: res }));
         } catch (error) {
           logger.log((error as { message: string }).message);
         }

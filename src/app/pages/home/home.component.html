@@ -1,24 +1,26 @@
-<div class="page">
+<div class="page main-page hide-scroll">
   <div class="container menu">
     <dropdown-links
       [title]="'stores'"
       [links]="outletStore.storeLinks()"
       [open]="true"
     />
-    <dropdown-links
-      [title]="'statistics'"
-      [links]="statisticsLinks"
-      [open]="true"
-    />
 
     @if (isAdmin()) {
     <dropdown-links
-      [links]="[{ name: 'admin', url: '/admin' }]"
+      [open]="true"
+      [links]="[
+        { name: 'admin', url: '/admin' },
+        { name: 'statistics', url: '/statistics' }
+      ]"
       [title]="'app links'"
     ></dropdown-links>
     }
   </div>
-  <main class="container main-content">
-    <router-outlet></router-outlet>
-  </main>
+
+  <div class="page main-content">
+    @for (info of inventoryStore.infos(); track $index) {
+    <home-info [info]="info" />
+    }
+  </div>
 </div>

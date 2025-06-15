@@ -4,8 +4,8 @@ import { InventoryStatisticsComponent } from '../pages/inventory-statistics/inve
 import { PurchasesStatisticsComponent } from '../pages/purchases-statistics/purchases-statistics.component';
 
 export const routes: Routes = [
-  // { path: '', pathMatch: 'full', redirectTo: '/home/sales-statistics' },
-  // { path: 'sales-statistics', component: SalesStatisticsComponent },
-  // { path: 'purchases-statistics', component: PurchasesStatisticsComponent },
-  // { path: 'inventory-statistics', component: InventoryStatisticsComponent },
+  { path: '', pathMatch: 'full', redirectTo: '/statistics/sales' },
+  { path: 'sales', component: SalesStatisticsComponent },
+  { path: 'purchases', component: PurchasesStatisticsComponent },
+  { path: 'inventories', component: InventoryStatisticsComponent },
 ];
