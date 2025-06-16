@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SupplierStore } from '../../app-stores/supplier.store';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
-import { NotificationService } from '../../services/notification.service';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'suppliers',
@@ -15,7 +15,7 @@ export class SuppliersComponent {
   plusIcon = faAdd;
   formBuilder = inject(FormBuilder);
   supplierStore = inject(SupplierStore);
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   form = this.formBuilder.group({
     store: ['', Validators.required],
   });

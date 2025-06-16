@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RequestAllertStore } from '../../app-stores/request-allert.store';
-import { NotificationService } from '../../services/notification.service';
+
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'allert-success',
@@ -10,7 +11,7 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class AllertSuccessComponent {
   // reqState = inject(RequestAllertStore);
-  reqState = inject(NotificationService);
+  reqState = inject(Notification);
 
   reset() {
     this.reqState.reset();

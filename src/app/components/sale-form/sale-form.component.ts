@@ -14,8 +14,8 @@ import { CartComponent } from '../cart/cart.component';
 import { Product } from '../../interfaces/product';
 import { OutletsStore } from '../../app-stores/outlet.store';
 
-import { RequestAllertStore } from '../../app-stores/request-allert.store';
 import { ISaleItem, SaleStore, ISale } from '../../app-stores/sale.store';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'sale-form',
@@ -39,7 +39,7 @@ export class SaleFormComponent {
 
   inventoriesStore = inject(InventoriesStore);
   // for state management of the request
-  reqState = inject(RequestAllertStore);
+  reqState = inject(Notification);
   outletStore = inject(OutletsStore);
   salesStore = inject(SaleStore);
   formBuilder = inject(FormBuilder);
@@ -57,7 +57,10 @@ export class SaleFormComponent {
     const products = this.salesStore.cart().map((item) => {
       return { ...item, product: this.findProduct(item.product)._id };
     });
-    this.reqState.setState({ loading: true, message: 'submitting sales' });
+    this.reqState.updateNotification({
+      loading: true,
+      message: 'submitting sales',
+    });
     const status = await this.salesStore.postSale({
       products,
       store: this.outletStore.selectedStore()?._id || '',
@@ -65,7 +68,7 @@ export class SaleFormComponent {
       discount: 0,
     });
     if (!!status) {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         message: 'sales successfully saved',
         status,
       });
@@ -74,7 +77,7 @@ export class SaleFormComponent {
 
       this.salesStore.toggleSaleForm();
     } else {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         message: 'could not save the sales',
         status: false,
       });

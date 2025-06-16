@@ -18,6 +18,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../interfaces/product';
 import { CartComponent } from '../cart/cart.component';
 import { CurrencyPipe } from '@angular/common';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'purchase-form',
@@ -41,7 +42,7 @@ export class PurchaseFormComponent {
 
   inventoriesStore = inject(InventoriesStore);
   // for state management of the request
-  reqState = inject(RequestAllertStore);
+  reqState = inject(Notification);
   outletStore = inject(OutletsStore);
   supplierStore = inject(SupplierStore);
   requestStore = inject(PurchasesStore);
@@ -60,7 +61,10 @@ export class PurchaseFormComponent {
     const products = this.requestStore.cart().map((item) => {
       return { ...item, product: this.findProduct(item.product)._id };
     });
-    this.reqState.setState({ loading: true, message: 'submitting request' });
+    this.reqState.updateNotification({
+      loading: true,
+      message: 'submitting request',
+    });
     const status = await this.requestStore.postPurchase({
       products,
       destination: this.outletStore.selectedStore()?._id || '',
@@ -70,7 +74,7 @@ export class PurchaseFormComponent {
     });
     console.log({ action: 'submit request', status });
     if (!!status) {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         message: 'purchase request successfully saved',
         status: true,
       });
@@ -79,7 +83,7 @@ export class PurchaseFormComponent {
 
       // this.requestStore.toggleForm();
     } else {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         message: 'could not save the purchase',
         status: false,
       });

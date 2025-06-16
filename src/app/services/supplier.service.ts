@@ -3,8 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { OriginService } from './origin.service';
 import { ISupplier } from '../app-stores/supplier.store';
-import { NotificationService } from './notification.service';
+
 import { PostResponse } from '../interfaces/post-result';
+import { Notification } from '../app-stores/notification.store';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ import { PostResponse } from '../interfaces/post-result';
 export class SupplierService {
   origin = inject(OriginService).origin;
   http = inject(HttpService);
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   constructor() {}
   async getStores() {
     const api = `${this.origin}/api/suppliers`;

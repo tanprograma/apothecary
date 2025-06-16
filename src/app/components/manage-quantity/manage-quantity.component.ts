@@ -6,6 +6,7 @@ import { InventoriesStore, IInventory } from '../../app-stores/inventory.store';
 import { IStore } from '../../app-stores/outlet.store';
 import { RequestAllertStore } from '../../app-stores/request-allert.store';
 import { Product } from '../../interfaces/product';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'manage-quantity',
@@ -15,7 +16,7 @@ import { Product } from '../../interfaces/product';
 })
 export class ManageQuantityComponent {
   formBuilder = inject(FormBuilder);
-  notification = inject(RequestAllertStore);
+  notification = inject(Notification);
   form = this.formBuilder.group({
     quantity: [0, Validators.required],
   });
@@ -30,7 +31,7 @@ export class ManageQuantityComponent {
       Product,
       IStore
     >;
-    this.notification.setState({
+    this.notification.updateNotification({
       message: 'setting quantity',
       loading: true,
     });
@@ -39,12 +40,12 @@ export class ManageQuantityComponent {
       payload: { quantity, _id },
     });
     if (!!status) {
-      this.notification.setState({
+      this.notification.updateNotification({
         message: 'quantity set successfully',
         status,
       });
     } else {
-      this.notification.setState({
+      this.notification.updateNotification({
         message: 'action failed',
         status,
       });

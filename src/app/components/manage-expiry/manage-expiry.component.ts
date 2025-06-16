@@ -6,6 +6,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../interfaces/product';
 import { IStore } from '../../app-stores/outlet.store';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'manage-expiry',
@@ -15,7 +16,7 @@ import { IStore } from '../../app-stores/outlet.store';
 })
 export class ManageExpiryComponent {
   formBuilder = inject(FormBuilder);
-  notification = inject(RequestAllertStore);
+  notification = inject(Notification);
   form = this.formBuilder.group({
     expiry: ['', Validators.required],
   });
@@ -30,7 +31,7 @@ export class ManageExpiryComponent {
       Product,
       IStore
     >;
-    this.notification.setState({
+    this.notification.updateNotification({
       message: 'setting expiry date',
       loading: true,
     });
@@ -39,12 +40,12 @@ export class ManageExpiryComponent {
       payload: { expiry: date, _id },
     });
     if (!!status) {
-      this.notification.setState({
+      this.notification.updateNotification({
         message: 'expiry set successfully',
         status,
       });
     } else {
-      this.notification.setState({
+      this.notification.updateNotification({
         message: 'action failed',
         status,
       });

@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { ProductsStore } from '../../app-stores/products.store';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
-import { NotificationService } from '../../services/notification.service';
+
 import { toNamespacedPath } from 'node:path';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnitStore } from '../../app-stores/unit.store';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'products',
@@ -18,7 +19,7 @@ export class ProductsComponent {
   formBuilder = inject(FormBuilder);
   productsStore = inject(ProductsStore);
   unitsStore = inject(UnitStore);
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   form = this.formBuilder.group({
     name: ['', Validators.required],
     unit: ['', Validators.required],

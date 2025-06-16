@@ -13,17 +13,17 @@
     created by tanprograma LLC&copy;2024. for help call +255 685 926 033
   </footer>
   <!-- loading things -->
-  @if (notificationService.notification.loading) {
+  @if (notificationStore.loading()) {
   <div class="loading">
-    @if (notificationService.notification.status==undefined) {
+    @if (notificationStore.status()==undefined) {
 
     <allert-loading />
 
-    } @if (notificationService.notification.status==true) {
+    } @if (notificationStore.status()==true) {
 
     <allert-success />
 
-    } @if (notificationService.notification.status==false) {
+    } @if (notificationStore.status()==false) {
 
     <allert-failure />
 

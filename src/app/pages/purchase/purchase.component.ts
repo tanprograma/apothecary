@@ -5,6 +5,7 @@ import { PurchaseFormComponent } from '../../components/purchase-form/purchase-f
 import { PurchaseReceiveComponent } from '../../components/purchase-receive/purchase-receive.component';
 import { PurchaseViewComponent } from '../../components/purchase-view/purchase-view.component';
 import { SupplierStore } from '../../app-stores/supplier.store';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'purchase',
@@ -20,11 +21,16 @@ export class PurchaseComponent {
   outletStore = inject(OutletsStore);
   supplierStore = inject(SupplierStore);
   transferStore = inject(PurchasesStore);
+  notificationStore = inject(Notification);
   ngOnInit(): void {
     // this.initialize();
     this.getRequests();
   }
   initialize() {
+    this.notificationStore.updateNotification({
+      message: 'getting purchases',
+      loading: true,
+    });
     Promise.all([
       this.transferStore.getStorePurchases(
         this.outletStore.selectedStore()?._id as string,
@@ -33,7 +39,7 @@ export class PurchaseComponent {
       this.supplierStore.getStores(),
       this.outletStore.getStores(),
     ]).then((res) => {
-      console.log('purchase page initiliazed');
+      this.notificationStore.reset();
     });
   }
   getRequests() {

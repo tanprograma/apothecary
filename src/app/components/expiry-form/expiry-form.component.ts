@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { NotificationService } from '../../services/notification.service';
+
 import { OutletsStore } from '../../app-stores/outlet.store';
 import { Expiry, ExpiryStore } from '../../app-stores/expiry.store';
 import { InventoriesStore } from '../../app-stores/inventory.store';
@@ -12,6 +12,7 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { Product } from '../../interfaces/product';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'expiry-form',
@@ -27,11 +28,11 @@ export class ExpiryFormComponent {
   showMoreItems = true;
 
   units: { name: string; value: number }[] = [];
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   inventoriesStore = inject(InventoriesStore);
   expiryStore = inject(ExpiryStore);
   // for state management of the request
-  reqState = inject(NotificationService);
+
   outletStore = inject(OutletsStore);
 
   formBuilder = inject(FormBuilder);

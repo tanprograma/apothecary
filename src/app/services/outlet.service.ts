@@ -3,15 +3,14 @@ import { IStore } from '../app-stores/outlet.store';
 import { HttpService } from './http.service';
 import { OriginService } from './origin.service';
 import { PostResponse } from '../interfaces/post-result';
-
-import { NotificationService } from './notification.service';
+import { Notification } from '../app-stores/notification.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OutletService {
   origin = inject(OriginService).origin;
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   http = inject(HttpService);
   constructor() {}
   async getStores() {

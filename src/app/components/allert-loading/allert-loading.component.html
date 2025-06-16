@@ -5,11 +5,7 @@
     <div class="allert-container flex flex-center">
       <div class="div-allert">
         <p class="message text-center">
-          {{
-            !!reqState.notification.message
-              ? reqState.notification.message
-              : "loading..."
-          }}
+          {{ !!reqState.message() ? reqState.message() : "loading..." }}
         </p>
         <div class="loader-container">
           <div class="loader loading"></div>

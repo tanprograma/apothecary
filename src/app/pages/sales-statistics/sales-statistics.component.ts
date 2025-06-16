@@ -4,6 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGem, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { SaleStore } from '../../app-stores/sale.store';
 import { CurrencyPipe } from '@angular/common';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'sales-statistics',
@@ -13,12 +14,18 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class SalesStatisticsComponent implements OnInit {
   inventoryIcon = faGem;
-
+  notification = inject(Notification);
   ngOnInit(): void {
     this.getSummary({});
   }
   salesStore = inject(SaleStore);
   getSummary(options: any) {
-    this.salesStore.getSalesSummary(options).then(() => {});
+    this.notification.updateNotification({
+      message: 'getting statistics',
+      loading: true,
+    });
+    this.salesStore
+      .getSalesSummary(options)
+      .then(() => this.notification.reset());
   }
 }

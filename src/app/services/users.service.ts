@@ -2,10 +2,11 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { User } from '../interfaces/user';
 import { PostResponse } from '../interfaces/post-result';
 import { HttpService } from './http.service';
-import { NotificationService } from './notification.service';
+
 import { OriginService } from './origin.service';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { Notification } from '../app-stores/notification.store';
 
 @Injectable({
   providedIn: 'root',
@@ -15,14 +16,14 @@ export class UsersService {
   router = inject(Router);
   http = inject(HttpService);
   appID = inject(PLATFORM_ID);
-  notificationService = inject(NotificationService);
+  notificationStore = inject(Notification);
   constructor() {}
   async getUsers() {
     const api = `${this.origin}/api/users`;
     return this.http.get<User[]>(api);
   }
   async postUser(payload: Partial<User>) {
-    this.notificationService.updateNotification({
+    this.notificationStore.updateNotification({
       message: 'creating new user',
       loading: true,
     });
@@ -32,12 +33,12 @@ export class UsersService {
       payload
     );
     if (!!res.status) {
-      this.notificationService.updateNotification({
+      this.notificationStore.updateNotification({
         status: true,
         message: 'User created successfully',
       });
     } else {
-      this.notificationService.updateNotification({
+      this.notificationStore.updateNotification({
         status: false,
         message: 'User creation failed',
       });
@@ -45,7 +46,7 @@ export class UsersService {
     return res;
   }
   async login(payload: Partial<User>) {
-    this.notificationService.updateNotification({
+    this.notificationStore.updateNotification({
       message: 'logging in..',
       loading: true,
     });
@@ -55,9 +56,9 @@ export class UsersService {
       payload
     );
     if (!!res.status) {
-      this.notificationService.reset();
+      this.notificationStore.reset();
     } else {
-      this.notificationService.updateNotification({
+      this.notificationStore.updateNotification({
         status: false,
         message: 'login failed',
       });

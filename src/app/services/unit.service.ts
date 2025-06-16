@@ -2,8 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { Unit } from '../interfaces/unit';
 import { PostResponse } from '../interfaces/post-result';
 import { HttpService } from './http.service';
-import { NotificationService } from './notification.service';
+
 import { OriginService } from './origin.service';
+import { Notification } from '../app-stores/notification.store';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ import { OriginService } from './origin.service';
 export class UnitService {
   origin = inject(OriginService).origin;
   http = inject(HttpService);
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   constructor() {}
   async getUnits() {
     const api = `${this.origin}/api/units`;

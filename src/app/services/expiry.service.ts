@@ -5,7 +5,6 @@ import { HttpService } from './http.service';
 import { OriginService } from './origin.service';
 import { Product } from '../interfaces/product';
 import { IStore } from '../app-stores/outlet.store';
-import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',

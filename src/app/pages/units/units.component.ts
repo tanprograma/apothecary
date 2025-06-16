@@ -2,9 +2,10 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { SupplierStore } from '../../app-stores/supplier.store';
-import { NotificationService } from '../../services/notification.service';
+
 import { UnitStore } from '../../app-stores/unit.store';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'units',
@@ -16,7 +17,7 @@ export class UnitsComponent {
   plusIcon = faAdd;
   formBuilder = inject(FormBuilder);
   unitStore = inject(UnitStore);
-  notificationService = inject(NotificationService);
+  notificationService = inject(Notification);
   form = this.formBuilder.group({
     unit: ['', Validators.required],
   });

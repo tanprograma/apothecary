@@ -6,10 +6,11 @@ import {
   faAngleUp,
   faEnvelope,
 } from '@fortawesome/free-solid-svg-icons';
-import { RequestAllertStore } from '../../app-stores/request-allert.store';
+
 import { OutletsStore } from '../../app-stores/outlet.store';
 import { InventoriesStore } from '../../app-stores/inventory.store';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'purchase-receive',
@@ -24,7 +25,7 @@ export class PurchaseReceiveComponent {
   moreIcon = faAngleDown;
   envelopIcon = faEnvelope;
 
-  reqState = inject(RequestAllertStore);
+  reqState = inject(Notification);
   outletStore = inject(OutletsStore);
   supplierStore = inject(SupplierStore);
   inventoriesStore = inject(InventoriesStore);
@@ -50,18 +51,18 @@ export class PurchaseReceiveComponent {
         };
       }),
     };
-    this.reqState.setState({
+    this.reqState.updateNotification({
       message: 'processing issue request',
       loading: true,
     });
     const res = await this.transferStore.receivePurchase(payload);
     if (!!res) {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         status: true,
         message: 'successfuly issued items',
       });
     } else {
-      this.reqState.setState({
+      this.reqState.updateNotification({
         status: false,
         message: 'could not issue items',
       });

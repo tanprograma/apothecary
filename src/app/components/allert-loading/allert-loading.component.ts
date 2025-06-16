@@ -1,8 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { RequestAllertStore } from '../../app-stores/request-allert.store';
-import { NotificationService } from '../../services/notification.service';
+import { Notification } from '../../app-stores/notification.store';
 
 @Component({
   selector: 'allert-loading',
@@ -13,6 +12,6 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class AllertLoadingComponent {
   // reqState = inject(RequestAllertStore);
-  reqState = inject(NotificationService);
+  reqState = inject(Notification);
   loadingIcon = faSpinner;
 }
