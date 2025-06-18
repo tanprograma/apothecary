@@ -7,6 +7,7 @@ import { StoreModel } from '../models/store';
 import { SupplierModel } from '../models/supplier';
 import { PurchaseUtil } from '../utilities/purchase.util';
 import { purchase } from '../models/inventory';
+import { addPurchaseInfo } from '../models/info.model';
 const router = Express.Router();
 router.get('', async (req, res) => {
   const query = req.query;
@@ -43,7 +44,10 @@ router.patch('/receive/:requestID', async (req, res) => {
     if (!!transaction) {
       transaction.products = products;
       transaction.completed = true;
-      await transaction.save();
+      // await transaction.save();
+      // // one liner to save purchase info
+      // await addPurchaseInfo(transaction)
+      //
       for (let item of products) {
         await purchase(item, transaction.destination);
       }

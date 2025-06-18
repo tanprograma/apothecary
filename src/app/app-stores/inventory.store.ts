@@ -31,27 +31,33 @@ export type InventorySummary = {
 //   unit_value: number;;oa
 //   price: number;
 // }
-export interface Info {
-  _id: string;
+export interface Info extends Pick<InventoryInfo, 'amount' | 'items'> {
+  // summary of info
+
   category: string;
-  items: number;
   orders: number;
+}
+export interface InventoryInfo {
+  // aggregates inventory info
+  quantity: number;
   amount: number;
+  items: number;
 }
 export interface IInventory<
   T extends Product | string,
   K extends IStore | string
 > {
+  //inventory type
   _id: string;
   store: K;
   product: T;
   quantity: number;
+  sales: InventoryInfo;
+  purchases: InventoryInfo;
+  receive: InventoryInfo;
+  issue: InventoryInfo;
   prices: { unit: string; value: number }[];
   expiry: string;
-  salesInfo: Info;
-  purchasesInfo: Info;
-  issueInfo: Info;
-  receiveInfo: Info;
 }
 export interface InfoSummary {
   sales: Info;
@@ -63,7 +69,6 @@ type InventoryState = {
   inventorySummary: InventorySummary[];
   inventory: IInventory<Product, IStore>[];
   infos: Info[];
-
   selectedInventory: null | IInventory<Product, IStore>;
   isLoading: boolean;
   filter: { product: string; category: string };

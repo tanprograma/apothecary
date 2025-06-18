@@ -60,6 +60,7 @@ export class RequestFormComponent {
     const products = this.requestStore.cart().map((item) => {
       return { ...item, product: this.findProduct(item.product)._id };
     });
+    console.log(products);
     this.reqState.updateNotification({
       loading: true,
       message: 'submitting request',

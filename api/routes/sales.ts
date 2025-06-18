@@ -5,8 +5,8 @@ import { SaleModel } from '../models/sale';
 import { ProductModel } from '../models/product';
 import { StoreModel } from '../models/store';
 import { SaleUtil } from '../utilities/sale.util';
-import { sell } from '../models/inventory';
-import { addSaleInfo } from '../models/info.model';
+import { addSalesInfo, sell } from '../models/inventory';
+
 const router = Express.Router();
 router.get('/', async (req, res) => {
   const query = req.query;
@@ -63,7 +63,7 @@ router.get('/store/:id/summary', async (req, res) => {
 });
 router.post('/create', async (req, res) => {
   const sale = await SaleModel.create(req.body);
-  await addSaleInfo(sale);
+
   for (let item of sale.products) {
     await sell(item, sale.store);
   }
@@ -74,13 +74,18 @@ router.post('/create', async (req, res) => {
 });
 router.post('/migrate', async (req, res) => {
   const sale = await SaleModel.create(req.body);
-  await addSaleInfo(sale);
+  for (let item of sale.products) {
+    await sell(item, sale.store, true);
+  }
+  // await addSalesInfo(sale, true);
   res.send(sale);
 });
 router.post('/createmany', async (req, res) => {
   const sales: any = await SaleModel.create(req.body);
   for (let sale of sales) {
-    await addSaleInfo(sale);
+    for (let item of sale.products) {
+      await sell(item, sale.store, true);
+    }
   }
   res.send({ status: true, result: sales });
 });

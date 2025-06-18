@@ -58,8 +58,8 @@ router.patch('/issue/:requestID', async (req, res) => {
       transaction.products = products;
       transaction.completed = true;
       await transaction.save();
-      await addReceiveInfo(transaction);
-      await addIssueInfo(transaction);
+      // await addReceiveInfo(transaction);
+      // await addIssueInfo(transaction);
       for (let item of products) {
         await issue(item, transaction.source, transaction.destination);
       }

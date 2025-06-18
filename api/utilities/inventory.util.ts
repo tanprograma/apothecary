@@ -186,4 +186,34 @@ export class InventoryUtil {
       return {};
     }
   }
+  static getInfoSummary(inventories: any[], info: any[]) {
+    let summary: {
+      [key: string]: {
+        category: string;
+        orders: number;
+        amount: number;
+        items: number;
+      };
+    } = {};
+    for (let item of info) {
+      summary[item.category] = { ...item, amount: 0, items: 0 };
+    }
+    const data = inventories.reduce((cum: any, curr: any) => {
+      cum['sales'] = incrementInfo(cum['sales'], curr.sales);
+      cum['purchases'] = incrementInfo(cum['purchases'], curr.purchases);
+      cum['receive'] = incrementInfo(cum['receive'], curr.receive);
+      cum['issue'] = incrementInfo(cum['issue'], curr.issue);
+      return cum;
+    }, summary);
+    return Object.values(data);
+  }
+}
+function incrementInfo(current: any, item: any) {
+  const { items, amount, quantity } = current;
+  return {
+    ...current,
+    items: items + item.items,
+    amount: amount + item.amount,
+    quantity: quantity + item.quantity,
+  };
 }

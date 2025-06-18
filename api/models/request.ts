@@ -11,6 +11,7 @@ const productSchema = new Schema<IRequestItem>(
     unit: String,
     unit_value: Number,
     received: Number,
+    price: Number,
   },
   { _id: false }
 );
