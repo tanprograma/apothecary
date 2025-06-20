@@ -18,6 +18,7 @@ export type PurchaseSummary = {
   unit_value: number;
   requested: number;
   received: number;
+  amount: number;
 };
 
 export interface IPurchaseItem {

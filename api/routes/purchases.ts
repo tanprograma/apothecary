@@ -6,16 +6,25 @@ import { ProductModel } from '../models/product';
 import { StoreModel } from '../models/store';
 import { SupplierModel } from '../models/supplier';
 import { PurchaseUtil } from '../utilities/purchase.util';
-import { purchase } from '../models/inventory';
+import { InventoryModel, purchase } from '../models/inventory';
 import { addPurchaseInfo } from '../models/info.model';
+import { SummaryStats } from '../utilities/statistics.util';
 const router = Express.Router();
 router.get('', async (req, res) => {
-  const query = req.query;
-  const data = await PurchaseUtil.find(
-    { ProductModel, StoreModel, SupplierModel, PurchaseModel },
-    query
-  );
-  res.send(new PurchaseUtil(data).summary());
+  const { storeID } = req.query;
+
+  try {
+    const [inventories, products] = await Promise.all([
+      !!storeID
+        ? InventoryModel.find({ store: storeID })
+        : InventoryModel.find(),
+      ProductModel.find(),
+    ]);
+
+    res.send(new SummaryStats(products, inventories).purchaseSummary);
+  } catch (error) {
+    res.send([]);
+  }
 });
 router.get('/store/:id', async (req, res) => {
   const query = req.query;

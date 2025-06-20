@@ -4,9 +4,93 @@ import {
   InfoSummary,
   InventorySummary,
 } from '../../src/app/app-stores/inventory.store';
+import { IStore } from '../../src/app/app-stores/outlet.store';
+import { SalesSummary } from '../../src/app/app-stores/sale.store';
+import { Product } from '../../src/app/interfaces/product';
 
-class Summary {
-  [product: string]: InventorySummary;
+class Summary<T> {
+  [product: string]: T;
+}
+export class SummaryStats {
+  constructor(
+    private products: Product[],
+    private stores: IStore[],
+    private inventories: IInventory<string, string>[]
+  ) {}
+
+  get salesSummary() {
+    return '';
+  }
+  createSalesSummary() {
+    const summary = new Summary<SalesSummary>();
+    const raw = this.inventories.reduce(
+      (cum: Summary<SalesSummary>, curr: IInventory<string, string>) => {
+        const found = cum[curr.product];
+        if (!!found) {
+          // found then aggregate quantity and amount
+          cum[curr.product] = {
+            ...found,
+            quantity: found.quantity + curr.sales.quantity,
+            amount: found.amount + curr.sales.amount,
+          };
+        } else {
+          cum[curr.product] = {
+            product: curr.product,
+            quantity: curr.sales.quantity,
+            unit: '',
+            amount: curr.sales.amount,
+          };
+        }
+        return cum;
+      },
+      summary
+    );
+    return Object.values(raw).map((item: SalesSummary) => {
+      const product = this.findProduct(item.product) as Product;
+      const unit = this.findLargestUnit(product.units);
+      return {
+        ...item,
+        product: product.name,
+        unit: unit.name,
+        quantity: item.quantity / unit.value,
+      };
+    });
+  }
+
+  private findProduct(id: any) {
+    return this.products.find((p) => p._id == id);
+  }
+  private findStore(id: any) {
+    return this.stores.find((p) => p._id == id);
+  }
+
+  getInventoryItemValue(inventoryItem: any) {
+    //   returns the value of inventory
+    const smallestPrice = this.findSmallestPrice(inventoryItem.prices).value;
+    return (smallestPrice * inventoryItem.quantity) as number;
+  }
+
+  private findLargestUnit(units: any[]) {
+    return units.sort((a: any, b: any) => {
+      if (a.value > b.value) return -1;
+      if (a.value < b.value) return 1;
+      return 0;
+    })[0];
+  }
+  private findSmallestUnit(units: any[]) {
+    return units.sort((a: any, b: any) => {
+      if (a.value < b.value) return -1;
+      if (a.value > b.value) return 1;
+      return 0;
+    })[0];
+  }
+  private findSmallestPrice(prices: any[]) {
+    return prices.sort((a: any, b: any) => {
+      if (a.value < b.value) return -1;
+      if (a.value > b.value) return 1;
+      return 0;
+    })[0] as { unit: string; value: number };
+  }
 }
 export class InventoryUtil {
   constructor(
@@ -62,7 +146,7 @@ export class InventoryUtil {
   private findStore(id: any) {
     return this.DB.stores.find((p) => p._id == id);
   }
-  private mapSummary(summary: Summary) {
+  private mapSummary(summary: Summary<InventorySummary>) {
     return Object.values(summary).map((item) => {
       return {
         ...item,
@@ -70,7 +154,7 @@ export class InventoryUtil {
       };
     });
   }
-  private addToSummary(summary: Summary, item: any) {
+  private addToSummary(summary: Summary<InventorySummary>, item: any) {
     const found = summary[item.product];
     const unit = this.findSmallestUnit(this.findProduct(item.product).units);
     // item.unit_value does not exist on inventory
@@ -88,7 +172,7 @@ export class InventoryUtil {
     return (smallestPrice * inventoryItem.quantity) as number;
   }
   private createSummaryContainer() {
-    const summary = new Summary();
+    const summary = new Summary<InventorySummary>();
     this.DB.products.forEach((item) => {
       const largestUnit = this.findLargestUnit(item.units);
       summary[item._id] = {

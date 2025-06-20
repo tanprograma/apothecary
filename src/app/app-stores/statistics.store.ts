@@ -14,9 +14,9 @@ import { LoggerService } from '../services/logger.service';
 export type SalesSummary = {
   product: string;
   unit: string;
-  unit_value: number;
+  // unit_value: number;
   quantity: number;
-  price: number;
+  amount: number;
 };
 type StatisticsState = {
   sales: SalesSummary[];

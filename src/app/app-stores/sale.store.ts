@@ -15,9 +15,9 @@ import { DateService } from '../services/date.service';
 export type SalesSummary = {
   product: string;
   unit: string;
-  unit_value: number;
+  // unit_value: number;
   quantity: number;
-  price: number;
+  amount: number;
 };
 
 export interface ISaleItem {

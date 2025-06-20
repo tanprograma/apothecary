@@ -5,28 +5,29 @@ import { SaleModel } from '../models/sale';
 import { ProductModel } from '../models/product';
 import { StoreModel } from '../models/store';
 import { SaleUtil } from '../utilities/sale.util';
-import { addSalesInfo, sell } from '../models/inventory';
+import { addSalesInfo, InventoryModel, sell } from '../models/inventory';
+import { InventoriesStore } from '../../src/app/app-stores/inventory.store';
+import { SummaryStats } from '../utilities/statistics.util';
 
 const router = Express.Router();
 router.get('/', async (req, res) => {
-  const query = req.query;
+  const { storeID } = req.query;
 
   try {
-    const data = await SaleUtil.find(
-      { ProductModel, StoreModel, SaleModel },
-      query
-    );
-    res.send(new SaleUtil(data).summary());
+    const [inventories, products] = await Promise.all([
+      !!storeID
+        ? InventoryModel.find({ store: storeID })
+        : InventoryModel.find(),
+      ProductModel.find(),
+    ]);
+    const stats = new SummaryStats(products, inventories).salesSummary;
+
+    res.send(new SummaryStats(products, inventories).salesSummary);
   } catch (error) {
     res.send([]);
   }
 });
-router.get('/info', async (req, res) => {
-  // const { store } = req.query;
-  // const filter = !!store ? { store: store as string } : {};
-  // const query = await SaleModel.countDocuments(filter);
-  // res.send({ query });
-});
+
 router.get('/count', async (req, res) => {
   const { store } = req.query;
   const filter = !!store ? { store: store as string } : {};
