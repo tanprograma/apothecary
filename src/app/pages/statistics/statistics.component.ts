@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { UsersStore } from '../../app-stores/users.store';
 import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown-links.component';
 import { RouterOutlet } from '@angular/router';
+import { OutletsStore } from '../../app-stores/outlet.store';
 
 @Component({
   selector: 'statistics',
@@ -11,6 +12,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class StatisticsComponent {
   userStore = inject(UsersStore);
+  outletStore = inject(OutletsStore);
   // storeConfig = this.shopService.storeConfig;
   // storeLinks: { url: string; name: string }[] = [];
   statisticsLinks: { name: string; url: string }[] = [
@@ -22,6 +24,8 @@ export class StatisticsComponent {
   ngOnInit(): void {
     if (!this.authenticated()) {
       this.userStore.routeToLogin();
+    } else {
+      this.getStores();
     }
   }
 
@@ -32,5 +36,13 @@ export class StatisticsComponent {
 
   authenticated() {
     return this.userStore.authenticated();
+  }
+  getStores() {
+    this.outletStore
+      .getStores()
+      .then(() => {})
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
 }

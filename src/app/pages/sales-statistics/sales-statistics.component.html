@@ -2,7 +2,13 @@
   <div class="component">
     <h2 class="text-center">{{ "" }}&nbsp;sales &nbsp; statistics</h2>
   </div>
-
+  <div class="component">
+    <!-- statistics filter -->
+    <statistics-filter (onFilter)="filterSales($event)" (onReset)="reset()" />
+  </div>
+  <div class="component form">
+    <search-box (emitSearch)="search($event)" />
+  </div>
   <div class="component data-frames">
     <!-- conntainer for inventory data -->
 

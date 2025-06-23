@@ -8,16 +8,18 @@ import { SaleUtil } from '../utilities/sale.util';
 import { addSalesInfo, InventoryModel, sell } from '../models/inventory';
 import { InventoriesStore } from '../../src/app/app-stores/inventory.store';
 import { SummaryStats } from '../utilities/statistics.util';
+import { createDateQuery } from '../utilities/util';
 
 const router = Express.Router();
 router.get('/', async (req, res) => {
+  const dateOptions = createDateQuery(req.query);
   const { storeID } = req.query;
 
   try {
     const [inventories, products] = await Promise.all([
       !!storeID
-        ? InventoryModel.find({ store: storeID })
-        : InventoryModel.find(),
+        ? InventoryModel.find({ store: storeID, ...dateOptions })
+        : InventoryModel.find(dateOptions),
       ProductModel.find(),
     ]);
     const stats = new SummaryStats(products, inventories).salesSummary;

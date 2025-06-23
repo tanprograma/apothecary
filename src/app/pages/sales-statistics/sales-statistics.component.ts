@@ -5,10 +5,20 @@ import { faGem, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { SaleStore } from '../../app-stores/sale.store';
 import { CurrencyPipe } from '@angular/common';
 import { Notification } from '../../app-stores/notification.store';
+import { SearchBoxComponent } from '../../components/search-box/search-box.component';
+import {
+  RequestQuery,
+  StatisticsFilterComponent,
+} from '../../components/statistics-filter/statistics-filter.component';
 
 @Component({
   selector: 'sales-statistics',
-  imports: [FontAwesomeModule, CurrencyPipe],
+  imports: [
+    FontAwesomeModule,
+    CurrencyPipe,
+    SearchBoxComponent,
+    StatisticsFilterComponent,
+  ],
   templateUrl: './sales-statistics.component.html',
   styleUrl: './sales-statistics.component.scss',
 })
@@ -27,5 +37,24 @@ export class SalesStatisticsComponent implements OnInit {
     this.salesStore
       .getSalesSummary(options)
       .then(() => this.notification.reset());
+  }
+  search(value: string) {
+    this.salesStore.updateFilter({ product: value });
+  }
+  async filterSales(event: RequestQuery) {
+    this.notification.updateNotification({
+      message: 'filtering sales',
+      loading: true,
+    });
+    await this.salesStore.getSalesSummary(event);
+    this.notification.reset();
+  }
+  async reset() {
+    this.notification.updateNotification({
+      message: 'filtering sales',
+      loading: true,
+    });
+    await this.salesStore.getSalesSummary({});
+    this.notification.reset();
   }
 }

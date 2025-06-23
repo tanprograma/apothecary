@@ -1,0 +1,50 @@
+<form class="flex flex-center" [formGroup]="form" (ngSubmit)="filter()">
+  <div class="control">
+    <label for="store"> store</label>
+    <select
+      class="input-primary"
+      formControlName="store"
+      id="store"
+      name="store"
+    >
+      <option value="" selected disabled>select a store</option>
+      @for (item of outletStore.stores(); track $index) {
+      <option [value]="item.name">{{ item.name }}</option>
+      }
+    </select>
+  </div>
+  <div class="control">
+    <label for="start"> start date</label>
+    <input
+      type="date"
+      name="start"
+      id="start"
+      class="input-primary"
+      formControlName="start"
+    />
+  </div>
+  <div class="control">
+    <label for="end"> end date</label>
+    <input
+      type="date"
+      name="end"
+      id="end"
+      class="input-primary"
+      formControlName="end"
+    />
+  </div>
+  <div class="control">
+    <span> &nbsp; </span>
+
+    <button class="btn-primary" type="submit">
+      <fa-icon [icon]="searchIcon"></fa-icon> &nbsp; search
+    </button>
+  </div>
+  <div class="control">
+    <span> &nbsp; </span>
+
+    <button class="btn-secondary" type="reset" (click)="reset()">
+      <fa-icon [icon]="refreshIcon"></fa-icon> &nbsp; reset
+    </button>
+  </div>
+</form>

@@ -15,7 +15,7 @@ import { DateService } from '../services/date.service';
 export type SalesSummary = {
   product: string;
   unit: string;
-  // unit_value: number;
+
   quantity: number;
   amount: number;
 };
@@ -88,6 +88,12 @@ export const SaleStore = signalStore(
       logger = inject(LoggerService),
       dateService = inject(DateService)
     ) => ({
+      updateFilter(filter: Partial<{ product: string; category: string }>) {
+        patchState(store, (state) => ({
+          ...state,
+          filter: { ...state.filter, ...filter },
+        }));
+      },
       async getSalesSummary(options: { [key: string]: any }) {
         // returns sale summary
         try {
