@@ -64,6 +64,7 @@ export const SaleStore = signalStore(
         //   get sales summary
         return state
           .salesSummary()
+          .filter((item) => item.quantity > 0)
           .filter((sale) => {
             if (!!state.filter.product()) {
               return sale.product.includes(state.filter.product());
@@ -98,6 +99,17 @@ export const SaleStore = signalStore(
         // returns sale summary
         try {
           const res = await salesService.getSalesSummary(options);
+
+          logger.log('sales summary fetched');
+          patchState(store, (state) => ({ ...state, salesSummary: res }));
+        } catch (error) {
+          logger.log((error as { message: string }).message);
+        }
+      },
+      async getReport(options: { [key: string]: any }) {
+        // returns sale summary
+        try {
+          const res = await salesService.getReport(options);
 
           logger.log('sales summary fetched');
           patchState(store, (state) => ({ ...state, salesSummary: res }));

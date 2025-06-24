@@ -43,10 +43,24 @@ export class SalesService {
   async getStoreSales(storeID: string, options: { [key: string]: any } = {}) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {
-      parsedOptions += `${key}=${options[key]}&&`;
+      // excludes store id
+      if (key != 'storeID') {
+        parsedOptions += `${key}=${options[key]}&&`;
+      }
     }
     const api = `${this.origin}/api/sales/store/${storeID}?${parsedOptions}`;
     return this.http.get<ISale[]>(api);
+  }
+  async getReport(options: { [key: string]: any } = {}) {
+    // gets the summarized report
+    let parsedOptions = '';
+    for (let key of Object.keys(options)) {
+      // excludes store id
+
+      parsedOptions += `${key}=${options[key]}&&`;
+    }
+    const api = `${this.origin}/api/sales/report?${parsedOptions}`;
+    return this.http.get<SalesSummary[]>(api);
   }
   toDisplayedSale(prescription: ISale) {
     const { date, time } = this.dateService.parseDate(prescription.createdAt);

@@ -41,12 +41,14 @@ export class SalesStatisticsComponent implements OnInit {
   search(value: string) {
     this.salesStore.updateFilter({ product: value });
   }
-  async filterSales(event: RequestQuery) {
+  async filterSales(query: RequestQuery) {
     this.notification.updateNotification({
       message: 'filtering sales',
       loading: true,
     });
-    await this.salesStore.getSalesSummary(event);
+
+    await this.salesStore.getReport(query);
+
     this.notification.reset();
   }
   async reset() {
@@ -55,6 +57,7 @@ export class SalesStatisticsComponent implements OnInit {
       loading: true,
     });
     await this.salesStore.getSalesSummary({});
+    this.salesStore.updateFilter({ product: '' });
     this.notification.reset();
   }
 }

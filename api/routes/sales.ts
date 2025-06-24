@@ -48,13 +48,10 @@ router.get('/store/:id', async (req, res) => {
 
   res.send(new SaleUtil(data).transform());
 });
-router.get('/store/:id/summary', async (req, res) => {
-  const query = req.query;
-  const { id } = req.params;
-
+router.get('/report', async (req, res) => {
   const data = await SaleUtil.find(
     { ProductModel, StoreModel, SaleModel },
-    { ...query, store: id }
+    req.query
   );
 
   try {
