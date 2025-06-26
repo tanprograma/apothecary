@@ -66,7 +66,9 @@ router.patch('/update-quantity', async (req, res) => {
 });
 router.patch('/restore', async (req, res) => {
   const inventories = await InventoryModel.find();
+  let index = 0;
   for (let item of inventories) {
+    console.log(`restoring item ${++index}`);
     item.sales = { items: 0, quantity: 0, amount: 0 };
     item.purchases = { items: 0, quantity: 0, amount: 0 };
     item.receive = { items: 0, quantity: 0, amount: 0 };
