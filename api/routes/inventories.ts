@@ -64,4 +64,30 @@ router.patch('/update-quantity', async (req, res) => {
     res.send({ status: true });
   }
 });
+router.patch('/restore', async (req, res) => {
+  const inventories = await InventoryModel.find();
+  for (let item of inventories) {
+    item.sales = { items: 0, quantity: 0, amount: 0 };
+    item.purchases = { items: 0, quantity: 0, amount: 0 };
+    item.receive = { items: 0, quantity: 0, amount: 0 };
+    item.issue = { items: 0, quantity: 0, amount: 0 };
+    await item.save();
+  }
+  const newInventories = await InventoryModel.find();
+  res.send(newInventories);
+});
+router.patch('/change-sales-info', async (req, res) => {
+  // initializing sales info
+  const { store, product, sales } = req.body;
+  const inventory = await InventoryModel.findOne({ store, product });
+  if (!!inventory) {
+    inventory.sales = {
+      items: sales.items + inventory.sales.items,
+      amount: sales.amount + inventory.sales.amount,
+      quantity: sales.quantity + inventory.sales.quantity,
+    };
+    await inventory.save();
+  }
+  res.send(inventory);
+});
 export default router;
