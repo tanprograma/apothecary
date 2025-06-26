@@ -11,6 +11,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "testserver": "nodemon dist/apothecary/server/server.mjs",
+    "server": "node dist/apothecary/server/server.mjs",
     "deploy": "node dist/apothecary/server/server.mjs"
   },
   "private": true,
