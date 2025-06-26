@@ -53,7 +53,7 @@ export class SummaryStats {
         ...item,
         product: product.name,
         unit: unit.name,
-        quantity: item.quantity / unit.value,
+        quantity: Math.ceil(item.quantity / unit.value),
       };
     });
   }
@@ -73,8 +73,8 @@ export class SummaryStats {
         } else {
           cum[curr.product] = {
             product: curr.product,
-            requested: curr.purchases.quantity,
-            received: curr.purchases.quantity,
+            requested: Math.ceil(curr.purchases.quantity),
+            received: Math.ceil(curr.purchases.quantity),
             unit: '',
             unit_value: 0,
             amount: curr.purchases.amount,

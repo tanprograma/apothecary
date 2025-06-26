@@ -24,7 +24,7 @@
       <div class="edit flex-20">amount(tzs)</div>
     </div>
     @for (item of salesStore.displayedSalesSummary(); track $index) {
-    <div class="component flex data-frame">
+    <div class="component flex data-frame d-frame">
       <!-- displays the data frame -->
       <div class="edit flex-10"><fa-icon [icon]="inventoryIcon"></fa-icon></div>
       <div class="sn flex-10">{{ $index + 1 }}</div>

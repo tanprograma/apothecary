@@ -1,7 +1,7 @@
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 import { SaleModel } from '../models/sale';
 class Summary {
-  [product: string]: TransactionItem;
+  [product: string]: any;
 }
 export class SaleUtil {
   constructor(
@@ -53,7 +53,9 @@ export class SaleUtil {
   private mapSummary(summary: Summary) {
     return Object.values(summary).map((item) => {
       return {
-        ...item,
+        amount: item.amount,
+        unit: item.unit,
+        product: item.product,
         quantity: Math.ceil(item.quantity / item.unit_value),
       };
     });
@@ -64,7 +66,7 @@ export class SaleUtil {
     summary[item.product] = {
       ...found,
       quantity: found.quantity + item.quantity * item.unit_value,
-      price: (found.price as number) + item.price * item.quantity,
+      amount: (found.amount as number) + item.price * item.quantity,
     };
   }
   private createSummaryContainer() {
@@ -76,7 +78,7 @@ export class SaleUtil {
         unit: largestUnit.name,
         unit_value: largestUnit.value,
         quantity: 0,
-        price: 0,
+        amount: 0,
       };
     });
     return summary;

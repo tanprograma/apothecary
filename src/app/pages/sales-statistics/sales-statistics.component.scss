@@ -1,7 +1,9 @@
 .page {
   background-color: lightgrey;
 }
-
+.data-frame {
+  margin: 3px;
+}
 .data-frame:hover {
   cursor: pointer;
   background-color: rgb(180, 245, 180);
