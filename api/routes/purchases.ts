@@ -7,7 +7,7 @@ import { StoreModel } from '../models/store';
 import { SupplierModel } from '../models/supplier';
 import { PurchaseUtil } from '../utilities/purchase.util';
 import { InventoryModel, purchase } from '../models/inventory';
-import { addPurchaseInfo } from '../models/info.model';
+
 import { SummaryStats } from '../utilities/statistics.util';
 const router = Express.Router();
 router.get('', async (req, res) => {

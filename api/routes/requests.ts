@@ -5,7 +5,7 @@ import { RequestModel } from '../models/request';
 import { StoreModel } from '../models/store';
 import { issue } from '../models/inventory';
 import { log } from './logs';
-import { addIssueInfo, addReceiveInfo } from '../models/info.model';
+
 const router = Express.Router();
 router.get('/', async (req, res) => {
   const query = req.query;
