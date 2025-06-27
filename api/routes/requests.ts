@@ -72,6 +72,17 @@ router.patch('/issue/:requestID', async (req, res) => {
     res.send({ status: false });
   }
 });
+router.post('/migrate', async (req, res) => {
+  const transaction = await RequestModel.create(req.body);
+  if (!!transaction.completed) {
+    for (let item of transaction.products) {
+      await issue(item, transaction.source, transaction.destination, true);
+    }
+  }
+
+  // await addSalesInfo(sale, true);
+  res.send(transaction);
+});
 router.post('/createmany', async (req, res) => {
   const sales = await RequestModel.create(req.body);
   res.send({ status: true, result: sales });

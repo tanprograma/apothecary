@@ -1,0 +1,15 @@
+.action-header {
+  position: relative;
+}
+.action-header button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.page {
+  background-color: lightgrey;
+}
+.data-frame:hover {
+  cursor: pointer;
+  background-color: rgb(180, 245, 180);
+}

@@ -1,0 +1,38 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;dispense
+    </h2>
+  </div>
+  <sale-form-date />
+
+  <div class="component data-frames">
+    <div class="component flex">
+      <!-- headers of the table -->
+      <div class="sn flex-10">sn</div>
+
+      <div class="product flex-10">date</div>
+
+      <div class="expiry flex-10">time</div>
+      <div class="expiry flex-30">product</div>
+      <div class="expiry flex-10">unit</div>
+      <div class="expiry flex-10">quantity</div>
+      <div class="expiry flex-20">amount</div>
+    </div>
+    @for (item of salesStore.sales(); track $index) {
+    <div class="component flex data-frame">
+      <div class="sn flex-10">{{ $index + 1 }}</div>
+
+      <div class="product flex-10">{{ item.date }}</div>
+
+      <div class="expiry flex-10">{{ item.time }}</div>
+      <div class="expiry flex-30">{{ item.product }}</div>
+      <div class="expiry flex-10">{{ item.unit }}</div>
+      <div class="expiry flex-10">{{ item.quantity }}</div>
+      <div class="expiry flex-20">
+        {{ item.quantity * item.price | currency : "Tzs" }}
+      </div>
+    </div>
+    }
+  </div>
+</div>

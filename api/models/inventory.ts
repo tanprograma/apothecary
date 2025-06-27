@@ -105,19 +105,27 @@ export async function sell(item: any, store: any, skipQuantity = false) {
   }
 }
 
-export async function purchase(item: any, store: any) {
+export async function purchase(item: any, store: any, skipQuantity = false) {
   const sale = await InventoryModel.findOne({
     store: store,
     product: item.product,
   });
   if (!!sale) {
-    sale.quantity += item.received * item.unit_value;
+    if (!skipQuantity) {
+      sale.quantity += item.received * item.unit_value;
+    }
+
     sale.purchases = incrementInfoRequest(sale.purchases, item);
 
     await sale.save();
   }
 }
-export async function issue(item: any, source: any, destination: any) {
+export async function issue(
+  item: any,
+  source: any,
+  destination: any,
+  skipQuantity = false
+) {
   // find respective inventories
   const [receivingInventory, issueInventory] = await Promise.all([
     InventoryModel.findOne({
@@ -131,14 +139,18 @@ export async function issue(item: any, source: any, destination: any) {
   ]);
   if (!!receivingInventory && !!issueInventory) {
     // modify quantities and save()handle receiving info
-    receivingInventory.quantity += item.received * item.unit_value;
+    if (!skipQuantity) {
+      receivingInventory.quantity += item.received * item.unit_value;
+      issueInventory.quantity -= item.received;
+    }
+
     receivingInventory.receive = incrementInfoRequest(
       receivingInventory.receive,
       item
     );
 
     // handle issue
-    issueInventory.quantity -= item.received;
+
     issueInventory.issue = incrementInfoRequest(issueInventory.issue, item);
     await Promise.all([receivingInventory.save(), issueInventory.save()]);
   }

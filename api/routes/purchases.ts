@@ -76,6 +76,17 @@ router.patch('/receive/:requestID', async (req, res) => {
 //   const result = await item.save();
 //   res.send({ status: true, result: result });
 // });
+router.post('/migrate', async (req, res) => {
+  const transaction = await PurchaseModel.create(req.body);
+  if (!!transaction.completed) {
+    for (let item of transaction.products) {
+      await purchase(item, transaction.destination, true);
+    }
+  }
+
+  // await addSalesInfo(sale, true);
+  res.send(transaction);
+});
 router.post('/createmany', async (req, res) => {
   const purchases = await PurchaseModel.create(req.body);
 
