@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 import products from '../api/routes/products';
 import inventories from '../api/routes/inventories';
-import info from '../api/routes/info.api';
+import info from '../api/routes/info.route';
 import stores from '../api/routes/stores';
 import sales from '../api/routes/sales';
 import units from '../api/routes/units';
