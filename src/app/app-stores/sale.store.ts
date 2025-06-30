@@ -41,7 +41,7 @@ export interface DisplayedSale extends ISaleItem {
 }
 type StatisticsState = {
   salesSummary: SalesSummary[];
-  sales: DisplayedSale[];
+  sales: ISale[];
   cart: ISaleItem[];
   isLoading: boolean;
   showPrescriptionForm: boolean;
@@ -58,12 +58,32 @@ const initialState: StatisticsState = {
 export const SaleStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed((state) => {
+  withComputed((state, saleService = inject(SalesService)) => {
     return {
       displayedSalesSummary: computed(() => {
         //   get sales summary
         return state
           .salesSummary()
+          .filter((item) => item.quantity > 0)
+          .filter((sale) => {
+            if (!!state.filter.product()) {
+              return sale.product.includes(state.filter.product());
+            } else {
+              return true;
+            }
+          })
+          .filter((sale) => {
+            if (!!state.filter.category()) {
+              return sale.product.includes(state.filter.category());
+            } else {
+              return true;
+            }
+          });
+      }),
+      displayedSales: computed(() => {
+        //   get sales summary
+        return saleService
+          .toDisplayedSales(state.sales())
           .filter((item) => item.quantity > 0)
           .filter((sale) => {
             if (!!state.filter.product()) {
@@ -117,6 +137,20 @@ export const SaleStore = signalStore(
           logger.log((error as { message: string }).message);
         }
       },
+      async getStoreReport(options: { [key: string]: any }) {
+        // returns sale summary
+        try {
+          const res = await salesService.getStoreReport(options);
+
+          logger.log('sales summary fetched');
+          patchState(store, (state) => ({
+            ...state,
+            sales: res,
+          }));
+        } catch (error) {
+          logger.log((error as { message: string }).message);
+        }
+      },
       async getStoreSales(storeID: string, options: { [key: string]: any }) {
         // returns store sales
         try {
@@ -126,7 +160,7 @@ export const SaleStore = signalStore(
 
           patchState(store, (state) => ({
             ...state,
-            sales: salesService.toDisplayedSales(res),
+            sales: res,
           }));
         } catch (error) {
           logger.log((error as { message: string }).message);
@@ -154,14 +188,9 @@ export const SaleStore = signalStore(
             // adds
             return {
               ...state,
-              sales: [
-                ...salesService.toDisplayedSale({
-                  ...result,
-                  products: state.cart,
-                }),
-                ...state.sales,
-              ],
+              sales: [{ ...result, products: state.cart }, ...state.sales],
             };
+            // products: state.cart,
           });
           // restore the cart
           patchState(store, (state) => ({ ...state, cart: [] }));
@@ -175,13 +204,7 @@ export const SaleStore = signalStore(
           // adds
           return {
             ...state,
-            sales: [
-              ...salesService.toDisplayedSale({
-                ...new_state,
-                products: state.cart,
-              }),
-              ...state.sales,
-            ],
+            sales: [new_state, ...state.sales],
           };
         });
         // restore the cart

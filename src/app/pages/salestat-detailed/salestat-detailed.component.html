@@ -1,11 +1,14 @@
 <div class="page">
   <div class="component action-header">
-    <h2 class="text-center">
-      {{ outletStore.selectedStore()?.name }} &nbsp;dispense
-    </h2>
+    <h2 class="text-center">&nbsp;dispense detailed</h2>
   </div>
-  <sale-form />
-
+  <div class="component">
+    <!-- statistics filter -->
+    <statistics-filter (onFilter)="filterSales($event)" (onReset)="reset()" />
+  </div>
+  <div class="component form">
+    <search-box (emitSearch)="search($event)" />
+  </div>
   <div class="component data-frames">
     <div class="component flex">
       <!-- headers of the table -->
@@ -34,10 +37,5 @@
       </div>
     </div>
     }
-  </div>
-  <div class="component flex flex-center">
-    <a class="btn-secondary text-center" routerLink="/statistics/sales-detailed"
-      >more</a
-    >
   </div>
 </div>

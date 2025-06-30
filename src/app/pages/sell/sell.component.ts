@@ -7,10 +7,11 @@ import { CurrencyPipe } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
 import { Notification } from '../../app-stores/notification.store';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'sell',
-  imports: [SaleFormComponent, CurrencyPipe, FontAwesomeModule],
+  imports: [SaleFormComponent, CurrencyPipe, FontAwesomeModule, RouterLink],
   templateUrl: './sell.component.html',
   styleUrl: './sell.component.scss',
 })

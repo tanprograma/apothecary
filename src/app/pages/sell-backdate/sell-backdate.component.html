@@ -19,7 +19,7 @@
       <div class="expiry flex-10">quantity</div>
       <div class="expiry flex-20">amount</div>
     </div>
-    @for (item of salesStore.sales(); track $index) {
+    @for (item of salesStore.displayedSales(); track $index) {
     <div class="component flex data-frame">
       <div class="sn flex-10">{{ $index + 1 }}</div>
 

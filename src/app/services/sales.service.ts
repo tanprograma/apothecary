@@ -62,6 +62,17 @@ export class SalesService {
     const api = `${this.origin}/api/sales/report?${parsedOptions}`;
     return this.http.get<SalesSummary[]>(api);
   }
+  async getStoreReport(options: { [key: string]: any } = {}) {
+    // gets the summarized report
+    let parsedOptions = '';
+    for (let key of Object.keys(options)) {
+      // excludes store id
+
+      parsedOptions += `${key}=${options[key]}&&`;
+    }
+    const api = `${this.origin}/api/sales/store-report?${parsedOptions}`;
+    return this.http.get<ISale[]>(api);
+  }
   toDisplayedSale(prescription: ISale) {
     const { date, time } = this.dateService.parseDate(prescription.createdAt);
     return prescription.products.map((i) => {

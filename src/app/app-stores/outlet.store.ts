@@ -53,6 +53,10 @@ const manageLinks: {
     name: 'admin',
     url: `/admin`,
   },
+  {
+    name: 'statistics',
+    url: `/statistics`,
+  },
 ];
 
 const shopStatisticsLinks: {

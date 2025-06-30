@@ -63,18 +63,28 @@
     </div>
     }
   </div>
+  <div class="component flex">
+    <input
+      type="text"
+      class="input-primary input-search flex-100"
+      placeholder="type product to search.."
+      (keyup)="searchProduct($event)"
+    />
+  </div>
   <table class="component">
     <thead>
       <tr>
         <th>sn</th>
         <th>product name</th>
+        <th>id</th>
       </tr>
     </thead>
     <tbody>
-      @for (item of productsStore.products(); track $index) {
+      @for (item of productsStore.displayedProducts(); track $index) {
       <tr>
         <td>{{ $index + 1 }}</td>
         <td>{{ item.name }}</td>
+        <td>{{ item._id }}</td>
       </tr>
       }
     </tbody>

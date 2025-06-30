@@ -55,4 +55,8 @@ export class ProductsComponent {
     };
     this.units.push(unit);
   }
+  searchProduct(e: Event) {
+    const value = (e.target as HTMLInputElement).value;
+    this.productsStore.updateFilter({ product: value });
+  }
 }

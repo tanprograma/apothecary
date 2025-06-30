@@ -28,16 +28,28 @@ import { ProductsService } from '../services/products.service';
 type ProductsState = {
   products: Product[];
   newProduct: Partial<Product>;
+  filter: { product: string };
 };
 const initialState: ProductsState = {
   products: [],
   newProduct: { name: '', units: [] },
+  filter: { product: '' },
 };
 export const ProductsStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   withComputed((state) => {
-    return {};
+    return {
+      displayedProducts: computed(() => {
+        return state.products().filter((item) => {
+          if (state.filter.product() == '') {
+            return true;
+          } else {
+            return item.name.includes(state.filter.product().toLowerCase());
+          }
+        });
+      }),
+    };
   }),
   withMethods(
     (
@@ -46,6 +58,12 @@ export const ProductsStore = signalStore(
 
       logger = inject(LoggerService)
     ) => ({
+      updateFilter(filter: Partial<{ product: string }>) {
+        patchState(store, (state) => ({
+          ...state,
+          filter: { ...state.filter, ...filter },
+        }));
+      },
       async getProducts() {
         const res = await productsService.getProducts();
         patchState(store, (state) => ({ ...state, products: res }));

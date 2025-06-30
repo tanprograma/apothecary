@@ -61,6 +61,19 @@ router.get('/report', async (req, res) => {
     res.send([]);
   }
 });
+router.get('/store-report', async (req, res) => {
+  try {
+    const data = await SaleUtil.find(
+      { ProductModel, StoreModel, SaleModel },
+      req.query
+    );
+
+    res.send(new SaleUtil(data).transform());
+  } catch (error) {
+    console.log((error as { message: string }).message);
+    res.send([]);
+  }
+});
 router.post('/create', async (req, res) => {
   const sale = await SaleModel.create(req.body);
 
