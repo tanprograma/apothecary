@@ -134,7 +134,7 @@ export class SaleUtil {
       return {
         createdAt: {
           $gte: new Date(parseInt(start)).toISOString(),
-          $lt: new Date(parseInt(end)).toISOString(),
+          $lte: new Date(parseInt(end)).toISOString(),
         },
       };
     } else {
