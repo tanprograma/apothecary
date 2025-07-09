@@ -137,7 +137,7 @@ export class InventoryUtil {
       prices,
       _id,
       store: { _id: completeStore._id, name: completeStore.name },
-      expiry: expiry || '',
+      expiry: expiry || 'not set',
     };
   }
   private findProduct(id: any) {

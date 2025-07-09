@@ -92,11 +92,12 @@ export const InventoriesStore = signalStore(
         return state
           .inventory()
           .map((sale) => {
-            let expiry = false;
-            if (!!sale.expiry) {
+            let isExpired = false;
+            let expiry = sale.expiry;
+            if (expiry != 'not set' && expiry != undefined) {
               const now = Date.now();
-              const exp_date = new Date(sale.expiry);
-              sale.expiry = `
+              const exp_date = new Date(expiry);
+              expiry = `
               ${exp_date.getDate()}/${
                 exp_date.getMonth() + 1
               }/${exp_date.getFullYear()}`;
@@ -105,12 +106,10 @@ export const InventoriesStore = signalStore(
               // 3 month benchmark
               const _benchmark = 1000 * 60 * 60 * 24 * 30 * 3;
               if (remaining_days < _benchmark) {
-                expiry = true;
+                isExpired = true;
               }
-            } else {
-              sale.expiry = 'not set';
             }
-            return { ...sale, isExpired: expiry };
+            return { ...sale, isExpired, expiry };
           })
           .filter((sale) => {
             if (!!state.filter.product()) {
