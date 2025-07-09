@@ -87,6 +87,41 @@ export const InventoriesStore = signalStore(
   withState(initialState),
   withComputed((state) => {
     return {
+      displayedInventories: computed(() => {
+        //   get sales summary
+        return state
+          .inventory()
+          .map((sale) => {
+            let expiry = false;
+            if (!!sale.expiry) {
+              const now = Date.now();
+              const exp_date = new Date(sale.expiry);
+              sale.expiry = `
+              ${exp_date.getDate()}/${
+                exp_date.getMonth() + 1
+              }/${exp_date.getFullYear()}`;
+              const exp = exp_date.getTime();
+              const remaining_days = exp - now;
+              // 3 month benchmark
+              const _benchmark = 1000 * 60 * 60 * 24 * 30 * 3;
+              if (remaining_days < _benchmark) {
+                expiry = true;
+              }
+            } else {
+              sale.expiry = 'not set';
+            }
+            return { ...sale, isExpired: expiry };
+          })
+          .filter((sale) => {
+            if (!!state.filter.product()) {
+              return sale.product.name.includes(
+                state.filter.product().toLowerCase()
+              );
+            } else {
+              return true;
+            }
+          });
+      }),
       displayedInventorySummary: computed(() => {
         //   get sales summary
         return state
@@ -131,6 +166,12 @@ export const InventoriesStore = signalStore(
       dateService = inject(DateService),
       logger = inject(LoggerService)
     ) => ({
+      updateFilter(payload: Partial<{ product: string; category: string }>) {
+        patchState(store, (state) => ({
+          ...state,
+          filter: { ...state.filter, ...payload },
+        }));
+      },
       findProduct(option: string) {
         return store.inventory().find((item) => {
           return item.product.name == option || item.product._id == option;

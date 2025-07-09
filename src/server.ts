@@ -5,7 +5,7 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
-import dotenv from 'dotenv';
+
 import mongoose from 'mongoose';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,9 +22,10 @@ import requests from '../api/routes/requests';
 import purchases from '../api/routes/purchases';
 import users from '../api/routes/user';
 import expired from '../api/routes/expired';
+import { LOCAL_DATABASE_URL } from '../api/db/connection-string';
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
-dotenv.config();
+
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
@@ -100,9 +101,12 @@ if (isMainModule(import.meta.url)) {
   app.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
 
-    const DATABASE_URL = (process.env['DATABASE_URL'] as string) || '';
+    const DATABASE_URL =
+      process.env['NODE_ENV'] == 'production'
+        ? process.env['DATABASE_URL']
+        : LOCAL_DATABASE_URL;
     mongoose
-      .connect(DATABASE_URL)
+      .connect(DATABASE_URL as string)
       .then(() => {
         console.log(`database ${DATABASE_URL} connected successfully`);
       })

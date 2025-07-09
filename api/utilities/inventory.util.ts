@@ -137,7 +137,7 @@ export class InventoryUtil {
       prices,
       _id,
       store: { _id: completeStore._id, name: completeStore.name },
-      expiry: this.createDate(expiry),
+      expiry: expiry,
     };
   }
   private findProduct(id: any) {

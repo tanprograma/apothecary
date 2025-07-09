@@ -36,6 +36,9 @@
     </div> -->
   </div>
   }@else {
+  <div class="component">
+    <search-box (emitSearch)="onSearch($event)" />
+  </div>
   <div class="component data-frames">
     <!-- conntainer for inventory data -->
 
@@ -48,15 +51,19 @@
       <div class="expiry flex-20">expiry</div>
       <div class="edit flex-10">edit</div>
     </div>
-    @for (item of inventoryStore.inventory(); track $index) {
-    <div class="component flex data-frame" (click)="selectInventoryItem(item)">
+    @for (item of inventoryStore.displayedInventories(); track $index) {
+    <div
+      class="component flex data-frame"
+      (click)="selectInventoryItem(item)"
+      [class.expired]="item.isExpired"
+    >
       <!-- displays the data frame -->
       <div class="sn flex-10">{{ $index + 1 }}</div>
 
       <div class="product flex-60">{{ item.product.name }}</div>
       <!-- <div class="unit flex-10">{{ item.quantity }}</div> -->
       <div class="expiry flex-20">
-        {{ !!item.expiry ? item.expiry : "not set" }}
+        {{ item.expiry }}
       </div>
       <div class="edit flex-10"><fa-icon [icon]="editIcon"></fa-icon></div>
     </div>
