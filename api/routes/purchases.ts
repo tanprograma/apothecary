@@ -53,7 +53,7 @@ router.patch('/receive/:requestID', async (req, res) => {
     if (!!transaction) {
       transaction.products = products;
       transaction.completed = true;
-      // await transaction.save();
+      await transaction.save();
       // // one liner to save purchase info
       // await addPurchaseInfo(transaction)
       //
@@ -61,6 +61,29 @@ router.patch('/receive/:requestID', async (req, res) => {
         await purchase(item, transaction.destination);
       }
       res.send({ status: true });
+    } else {
+      res.send({ status: false });
+    }
+  } catch (error) {
+    console.log((error as { message: string }).message);
+    res.send({ status: false });
+  }
+});
+router.get('/fix/:requestID', async (req, res) => {
+  // one time solution to my save Blunder
+  const id = req.params.requestID;
+
+  try {
+    const transaction = await PurchaseModel.findOne({ _id: id });
+    if (!!transaction) {
+      transaction.products = transaction.products.map((item) => {
+        return { ...item, received: item.requested };
+      });
+      transaction.completed = true;
+      const newTransaction = await transaction.save();
+      // // one liner to save purchase info
+
+      res.send(newTransaction);
     } else {
       res.send({ status: false });
     }
