@@ -73,7 +73,7 @@ export class SaleFormDateComponent {
         status,
       });
 
-      this.saleForm.patchValue({ customer: '', created_at: '' });
+      this.saleForm.patchValue({ customer: '' });
 
       this.salesStore.toggleSaleForm();
     } else {
