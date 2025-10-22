@@ -11,6 +11,7 @@ import { Sale } from '../interfaces/sale';
 import { SalesService } from '../services/sales.service';
 import { LoggerService } from '../services/logger.service';
 import { DateService } from '../services/date.service';
+import { start } from 'repl';
 
 export type SalesSummary = {
   product: string;
@@ -130,7 +131,7 @@ export const SaleStore = signalStore(
         // returns sale summary
         try {
           const res = await salesService.getReport(options);
-
+          console.log(res);
           logger.log('sales summary fetched');
           patchState(store, (state) => ({ ...state, salesSummary: res }));
         } catch (error) {
@@ -142,10 +143,10 @@ export const SaleStore = signalStore(
         try {
           const res = await salesService.getStoreReport(options);
 
-          logger.log('sales summary fetched');
           patchState(store, (state) => ({
             ...state,
             sales: res,
+            filter: { ...state.filter, product: options['product'] || '' },
           }));
         } catch (error) {
           logger.log((error as { message: string }).message);

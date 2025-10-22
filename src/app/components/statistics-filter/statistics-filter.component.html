@@ -1,5 +1,24 @@
 <form class="flex flex-center" [formGroup]="form" (ngSubmit)="filter()">
   <div class="control">
+    <label for="product">&nbsp;product</label>
+    <input
+      list="inventories"
+      id="product"
+      name="product"
+      placeholder="product name"
+      autocomplete="off"
+      formControlName="product"
+      class="input-primary"
+    />
+    <datalist id="inventories">
+      @for (item of productsStore.products(); track $index) {
+      <option [value]="item.name">
+        {{ item.name }}
+      </option>
+      }
+    </datalist>
+  </div>
+  <div class="control">
     <label for="store">&nbsp; store</label>
     <select
       class="input-primary"

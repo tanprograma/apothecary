@@ -3,6 +3,7 @@ import { UsersStore } from '../../app-stores/users.store';
 import { DropdownLinksComponent } from '../../components/dropdown-links/dropdown-links.component';
 import { RouterOutlet } from '@angular/router';
 import { OutletsStore } from '../../app-stores/outlet.store';
+import { ProductsStore } from '../../app-stores/products.store';
 
 @Component({
   selector: 'statistics',
@@ -13,6 +14,7 @@ import { OutletsStore } from '../../app-stores/outlet.store';
 export class StatisticsComponent {
   userStore = inject(UsersStore);
   outletStore = inject(OutletsStore);
+  productsStore = inject(ProductsStore);
   // storeConfig = this.shopService.storeConfig;
   // storeLinks: { url: string; name: string }[] = [];
   statisticsLinks: { name: string; url: string }[] = [
@@ -25,7 +27,7 @@ export class StatisticsComponent {
     if (!this.authenticated()) {
       this.userStore.routeToLogin();
     } else {
-      this.getStores();
+      this.initialize();
     }
   }
 
@@ -37,12 +39,15 @@ export class StatisticsComponent {
   authenticated() {
     return this.userStore.authenticated();
   }
+  initialize() {
+    Promise.all([this.getStores(), this.getProducts()]).then((_) =>
+      console.log('statistics initialized')
+    );
+  }
   getStores() {
-    this.outletStore
-      .getStores()
-      .then(() => {})
-      .catch((err) => {
-        console.log(err.message);
-      });
+    return this.outletStore.getStores();
+  }
+  getProducts() {
+    return this.productsStore.getProducts();
   }
 }

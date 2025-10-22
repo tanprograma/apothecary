@@ -1,3 +1,4 @@
+import { models } from 'mongoose';
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 import { SaleModel } from '../models/sale';
 class Summary {
@@ -113,6 +114,25 @@ export class SaleUtil {
       stores: stores as any[],
       products: products as any[],
     };
+  }
+
+  static filterPrescription(prescriptions: any[], query: any) {
+    try {
+      return prescriptions.map((prescription) => {
+        return {
+          ...prescription,
+          products: prescription.products.filter((item: any) => {
+            if (!!query.product) {
+              return item.product == query.product;
+            } else {
+              return true;
+            }
+          }),
+        };
+      });
+    } catch (error) {
+      return [];
+    }
   }
 
   static createDateQuery(query: any) {

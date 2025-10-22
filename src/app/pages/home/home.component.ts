@@ -21,6 +21,7 @@ import { trusted } from 'mongoose';
 export class HomeComponent implements OnInit {
   outletStore = inject(OutletsStore);
   inventoryStore = inject(InventoriesStore);
+
   userStore = inject(UsersStore);
   notificationStore = inject(Notification);
 
@@ -43,6 +44,7 @@ export class HomeComponent implements OnInit {
     });
     await Promise.all([
       this.outletStore.getStores(),
+
       this.inventoryStore.getInfoSummary(),
     ]);
     this.notificationStore.reset();

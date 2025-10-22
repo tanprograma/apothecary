@@ -32,6 +32,7 @@ export class SalestatDetailedComponent {
     this.getSales();
   }
   getSales() {
+    console.log('running detailed sales report');
     this.notification.updateNotification({
       message: 'getting sales',
       loading: true,

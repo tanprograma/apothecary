@@ -64,6 +64,10 @@ export const ProductsStore = signalStore(
           filter: { ...state.filter, ...filter },
         }));
       },
+      findProduct(name: string) {
+        const products = store.products();
+        return products.find((product) => product.name == name.toLowerCase())!;
+      },
       async getProducts() {
         const res = await productsService.getProducts();
         patchState(store, (state) => ({ ...state, products: res }));

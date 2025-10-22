@@ -3,6 +3,8 @@ import { OutletsStore } from '../../app-stores/outlet.store';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faRefresh, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+
+import { ProductsStore } from '../../app-stores/products.store';
 export interface RequestQuery {
   [property: string]: string | number;
 }
@@ -16,6 +18,7 @@ export class StatisticsFilterComponent {
   @Output() onFilter = new EventEmitter<RequestQuery>();
   @Output() onReset = new EventEmitter<boolean>();
   outletStore = inject(OutletsStore);
+  productsStore = inject(ProductsStore);
   searchIcon = faSearch;
   refreshIcon = faRefresh;
   formBuilder = inject(FormBuilder);
@@ -23,12 +26,14 @@ export class StatisticsFilterComponent {
     store: [''],
     start: [''],
     end: [''],
+    product: [''],
   });
   filter() {
     if (
       !this.form.value.end &&
       !this.form.value.start &&
-      !this.form.value.store
+      !this.form.value.store &&
+      !this.form.value.product
     ) {
       console.log('empty query');
       return;
@@ -47,10 +52,14 @@ export class StatisticsFilterComponent {
       store: this.form.value.store ?? '',
       start: this.form.value.start ?? '',
       end: this.form.value.end ?? '',
+      product: this.form.value.product ?? '',
     };
 
     if (!!ogQuery.store) {
-      query['storeID'] = this.outletStore.findStore(ogQuery.store)._id;
+      query['store'] = this.outletStore.findStore(ogQuery.store)._id;
+    }
+    if (!!ogQuery.product) {
+      query['product'] = ogQuery.product;
     }
     if (!!ogQuery.start) {
       query['start'] = this.parseDate(ogQuery.start);
