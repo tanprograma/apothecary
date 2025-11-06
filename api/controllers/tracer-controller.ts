@@ -70,21 +70,25 @@ export async function generateTracerReports(
         await Promise.all([
           PurchaseModel.find({
             destination: tracer.store,
+            'products.product': tracer.product,
             completed: true,
             createdAt: { $gte: tracer.created_on },
           }),
           RequestModel.find({
             destination: tracer.store,
+            'products.product': tracer.product,
             completed: true,
             createdAt: { $gte: tracer.created_on },
           }),
           RequestModel.find({
             source: tracer.store,
+            'products.product': tracer.product,
             completed: true,
             createdAt: { $gte: tracer.created_on },
           }),
           SaleModel.find({
             store: tracer.store,
+            'products.product': tracer.product,
             createdAt: { $gte: tracer.created_on },
           }),
         ]);
