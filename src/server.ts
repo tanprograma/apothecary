@@ -22,6 +22,7 @@ import requests from '../api/routes/requests';
 import purchases from '../api/routes/purchases';
 import users from '../api/routes/user';
 import expired from '../api/routes/expired';
+import tracers from '../api/routes/tracers';
 import { LOCAL_DATABASE_URL } from '../api/db/connection-string';
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -78,6 +79,7 @@ app.use('/api/purchases', purchases);
 app.use('/api/suppliers', suppliers);
 app.use('/api/users', users);
 app.use('/api/expiry', expired);
+app.use('/api/tracers', tracers);
 
 /**
  * Handle all other requests by rendering the Angular application.

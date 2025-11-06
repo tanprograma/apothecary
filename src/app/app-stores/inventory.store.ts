@@ -15,6 +15,8 @@ import { Product } from '../interfaces/product';
 import { Store } from '../interfaces/store';
 import { IStore } from './outlet.store';
 import { DateService } from '../services/date.service';
+import { TracerReport } from '../interfaces/tracer';
+import { TracerService } from '../services/tracer.service';
 
 export type InventorySummary = {
   product: string;
@@ -51,6 +53,8 @@ export interface IInventory<
   _id: string;
   store: K;
   product: T;
+  tracer?: number;
+  created_on?: string;
   quantity: number;
   sales: InventoryInfo;
   purchases: InventoryInfo;
@@ -69,12 +73,14 @@ type InventoryState = {
   inventorySummary: InventorySummary[];
   inventory: IInventory<Product, IStore>[];
   infos: Info[];
+  tracers: TracerReport[];
   selectedInventory: null | IInventory<Product, IStore>;
   isLoading: boolean;
   filter: { product: string; category: string };
 };
 const initialState: InventoryState = {
   inventorySummary: [],
+  tracers: [],
   selectedInventory: null,
   inventory: [],
   infos: [],
@@ -162,6 +168,7 @@ export const InventoriesStore = signalStore(
     (
       store,
       inventoryService = inject(InventoryService),
+      tracerService = inject(TracerService),
       dateService = inject(DateService),
       logger = inject(LoggerService)
     ) => ({
@@ -208,6 +215,22 @@ export const InventoriesStore = signalStore(
           }
         }
         return;
+      },
+      async getTracers() {
+        const res = await tracerService.getTracers();
+        patchState(store, (state) => ({ ...state, tracers: res }));
+      },
+      async postTracer(payload: {
+        value: number;
+        created_on: string;
+        store: string;
+        product: string;
+      }) {
+        const { status, result } = await tracerService.postTracer(payload);
+        if (!!result) {
+          await this.getTracers();
+        }
+        return status;
       },
       setFilter(item: { action: string; payload: any }) {
         switch (item.action) {

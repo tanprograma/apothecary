@@ -30,6 +30,8 @@ const InfoSchema = new Schema<{
 const schema = new Schema<IInventory<string, string>>({
   store: String,
   product: String,
+  tracer: Number,
+  created_on: String,
   prices: [priceSchema],
   quantity: Number,
   sales: {

@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;tracer report
+    </h2>
+  </div>
+  <tracer-form></tracer-form>
+  <table>
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>product</th>
+        <th>unit</th>
+        <th>initial(I)</th>
+        <th>received(R)</th>
+        <th>issued(S)</th>
+        <th>sold(D)</th>
+
+        <th>X (I&plus;R)</th>
+        <th>Y (S&plus;D)</th>
+        <th>Z (X&minus;Y)</th>
+        <th>available(A)</th>
+        <th>A&minus;Z</th>
+        <th>status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of inventoriesStore.tracers(); track $index) {
+      <tr
+        [class.positive]="isPositive(item)"
+        [class.negative]="!isPositive(item)"
+      >
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.product }}</td>
+        <td>smallest</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.received }}</td>
+        <td>{{ item.issued }}</td>
+        <td>{{ item.dispensed }}</td>
+        <td>{{ totalReceived(item) }}</td>
+        <td>{{ totalIssued(item) }}</td>
+        <td>{{ getComputed(item) }}</td>
+        <td>{{ item.available }}</td>
+        <td>{{ getDifference(item) }}</td>
+        @if(isPositive(item)){
+        <th>issue {{ getComputed(item) }}</th>
+        }@else if(!isPositive(item)){
+        <th>reduce issued by {{ -1 * getComputed(item) }}</th>
+        }@else {
+        <th>balanced</th>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

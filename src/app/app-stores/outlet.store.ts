@@ -31,8 +31,12 @@ const shopLinks: {
     url: `purchase`,
   },
   {
+    name: 'tracers',
+    url: `tracers`,
+  },
+  {
     name: 'expired',
-    url: `expiry`,
+    url: `expired`,
   },
 
   {
