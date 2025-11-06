@@ -6,6 +6,7 @@ import { TracerReport, Tracer } from '../../src/app/interfaces/tracer';
 import { ProductModel } from '../models/product';
 import { InventoryModel } from '../models/inventory';
 import { SaleModel } from '../models/sale';
+import { PurchaseModel } from '../models/purchase';
 
 export const getTracers = async (req: Request, res: Response) => {
   try {
@@ -65,23 +66,33 @@ export async function generateTracerReports(
 ): Promise<TracerReport[]> {
   return Promise.all(
     tracers.map(async (tracer) => {
-      const [receivedItems, issuedItems, dispensedItems] = await Promise.all([
-        RequestModel.find({
-          destination: tracer.store,
-          completed: true,
-          createdAt: { $gte: tracer.created_on },
-        }),
-        RequestModel.find({
-          source: tracer.store,
-          completed: true,
-          createdAt: { $gte: tracer.created_on },
-        }),
-        SaleModel.find({
-          store: tracer.store,
-          createdAt: { $gte: tracer.created_on },
-        }),
-      ]);
+      const [purchasedItems, receivedItems, issuedItems, dispensedItems] =
+        await Promise.all([
+          PurchaseModel.find({
+            destination: tracer.store,
+            completed: true,
+            createdAt: { $gte: tracer.created_on },
+          }),
+          RequestModel.find({
+            destination: tracer.store,
+            completed: true,
+            createdAt: { $gte: tracer.created_on },
+          }),
+          RequestModel.find({
+            source: tracer.store,
+            completed: true,
+            createdAt: { $gte: tracer.created_on },
+          }),
+          SaleModel.find({
+            store: tracer.store,
+            createdAt: { $gte: tracer.created_on },
+          }),
+        ]);
 
+      const purchased = purchasedItems.reduce((sum, request) => {
+        const item = request.products.find((p) => p.product === tracer.product);
+        return sum + (item ? item.received * item.unit_value : 0);
+      }, 0);
       const issued = issuedItems.reduce((sum, request) => {
         const item = request.products.find((p) => p.product === tracer.product);
         return sum + (item ? item.received * item.unit_value : 0);
@@ -104,7 +115,7 @@ export async function generateTracerReports(
         product: products.find((p) => p._id.toString() === tracer.product).name,
         issued,
         dispensed,
-        received,
+        received: received + purchased,
       };
     })
   );
