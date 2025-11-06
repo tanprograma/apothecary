@@ -9,4 +9,5 @@ export interface TracerReport extends Tracer {
   received: number;
   issued: number;
   dispensed: number;
+  purchased: number;
 }

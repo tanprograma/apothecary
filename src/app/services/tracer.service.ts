@@ -35,7 +35,7 @@ export class TracerService {
     const api = `${this.origin}/api/tracers`;
     const res = await this.http.post<
       Partial<{ value: number; created_on: string }>,
-      PostResponse<Tracer>
+      PostResponse<TracerReport>
     >(api, payload);
 
     return res;

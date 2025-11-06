@@ -74,6 +74,7 @@ type InventoryState = {
   inventory: IInventory<Product, IStore>[];
   infos: Info[];
   tracers: TracerReport[];
+  tracerFilter: string;
   selectedInventory: null | IInventory<Product, IStore>;
   isLoading: boolean;
   filter: { product: string; category: string };
@@ -81,6 +82,7 @@ type InventoryState = {
 const initialState: InventoryState = {
   inventorySummary: [],
   tracers: [],
+  tracerFilter: '',
   selectedInventory: null,
   inventory: [],
   infos: [],
@@ -93,6 +95,16 @@ export const InventoriesStore = signalStore(
   withState(initialState),
   withComputed((state) => {
     return {
+      displayedTracers: computed(() => {
+        //   get sales summary
+        return state.tracers().filter((tracer) => {
+          if (!!state.tracerFilter()) {
+            return tracer.product.includes(state.tracerFilter().toLowerCase());
+          } else {
+            return true;
+          }
+        });
+      }),
       displayedInventories: computed(() => {
         //   get sales summary
         return state
@@ -216,6 +228,9 @@ export const InventoriesStore = signalStore(
         }
         return;
       },
+      setTracerFilter(filter: string) {
+        patchState(store, (state) => ({ ...state, tracerFilter: filter }));
+      },
       async getTracers() {
         const res = await tracerService.getTracers();
         patchState(store, (state) => ({ ...state, tracers: res }));
@@ -228,10 +243,32 @@ export const InventoriesStore = signalStore(
       }) {
         const { status, result } = await tracerService.postTracer(payload);
         if (!!result) {
-          await this.getTracers();
+          const found = store
+            .tracers()
+            .find((item) => item.product == result.product);
+          if (!found) {
+            patchState(store, (state) => ({
+              ...state,
+              tracers: [result, ...state.tracers],
+            }));
+          } else {
+            patchState(store, (state) => ({
+              ...state,
+              tracers: state.tracers.map((tracer) => {
+                return tracer.product == result.product
+                  ? {
+                      ...tracer,
+                      quantity: result.quantity,
+                      created_on: result.created_on,
+                    }
+                  : tracer;
+              }),
+            }));
+          }
         }
         return status;
       },
+
       setFilter(item: { action: string; payload: any }) {
         switch (item.action) {
           case 'product':

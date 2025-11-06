@@ -35,12 +35,29 @@ export const getTracers = async (req: Request, res: Response) => {
 export const createTracer = async (req: Request, res: Response) => {
   const { store, product, created_on, value } = req.body;
   try {
-    const newTracer = await InventoryModel.findOne({ store, product });
+    const [newTracer, products] = await Promise.all([
+      InventoryModel.findOne({ store, product }),
+      ProductModel.find(),
+    ]);
     if (!!newTracer) {
       newTracer.tracer = value;
       newTracer.created_on = created_on;
       await newTracer.save();
-      res.status(201).json({ result: newTracer, status: true });
+      // creates a new tracer
+      const tracers = await generateTracerReports(
+        [
+          {
+            product,
+            quantity: value,
+            available: newTracer.quantity,
+            store,
+            created_on,
+          },
+        ],
+        products
+      );
+      // returns the new Tracer
+      res.status(201).json({ result: tracers[0], status: true });
       return;
     } else {
       res.status(201).json({ status: false });
@@ -119,7 +136,8 @@ export async function generateTracerReports(
         product: products.find((p) => p._id.toString() === tracer.product).name,
         issued,
         dispensed,
-        received: received + purchased,
+        received,
+        purchased,
       };
     })
   );
