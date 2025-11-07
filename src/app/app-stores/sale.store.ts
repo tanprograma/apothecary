@@ -146,7 +146,6 @@ export const SaleStore = signalStore(
           patchState(store, (state) => ({
             ...state,
             sales: res,
-            filter: { ...state.filter, product: options['product'] || '' },
           }));
         } catch (error) {
           logger.log((error as { message: string }).message);

@@ -1,6 +1,9 @@
 import { models } from 'mongoose';
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 import { SaleModel } from '../models/sale';
+import { StatisticQuery } from '../../src/app/interfaces/statistics';
+import { ISale } from '../../src/app/app-stores/sale.store';
+import { findIndex } from 'rxjs';
 class Summary {
   [product: string]: any;
 }
@@ -95,10 +98,8 @@ export class SaleUtil {
     models: { ProductModel: any; StoreModel: any; SaleModel: any },
     query: any
   ) {
-    const parsedQuery = SaleUtil.createDateQuery(query);
-    const findOptions = !!query.store
-      ? { ...parsedQuery, store: query.store }
-      : parsedQuery;
+    const findOptions = SaleUtil.queryReducer(query);
+
     const [prescriptions, stores, products] = await Promise.all([
       !!query.limit
         ? models.SaleModel.find(findOptions)
@@ -109,11 +110,25 @@ export class SaleUtil {
       models.ProductModel.find(),
     ]);
 
-    return {
-      prescriptions: prescriptions as any[],
-      stores: stores as any[],
-      products: products as any[],
-    };
+    return !!query.product
+      ? {
+          prescriptions: prescriptions.map(
+            ({ store, products, createdAt }: ISale) => ({
+              store,
+              createdAt,
+              products: products.filter(
+                (item) => item.product == query.product
+              ),
+            })
+          ) as any[],
+          stores: stores as any[],
+          products: products as any[],
+        }
+      : {
+          prescriptions: prescriptions as any[],
+          stores: stores as any[],
+          products: products as any[],
+        };
   }
 
   static filterPrescription(prescriptions: any[], query: any) {
@@ -135,30 +150,23 @@ export class SaleUtil {
     }
   }
 
-  static createDateQuery(query: any) {
-    const { start, end, limit } = query;
-
-    if (!!start && !end) {
-      return {
-        createdAt: {
-          $gte: new Date(parseInt(start)).toISOString(),
-        },
-      };
-    } else if (!start && !!end) {
-      return {
-        createdAt: {
-          $lte: new Date(parseInt(end)).toISOString(),
-        },
-      };
-    } else if (!!start && !!end) {
-      return {
-        createdAt: {
-          $gte: new Date(parseInt(start)).toISOString(),
-          $lte: new Date(parseInt(end)).toISOString(),
-        },
-      };
-    } else {
-      return {};
+  static queryReducer({ product, store, start, end }: StatisticQuery) {
+    const reducedQuery: { [key: string]: any } = {};
+    if (!!product) {
+      reducedQuery['products.product'] = product;
     }
+    if (!!store) {
+      reducedQuery['store'] = store;
+    }
+    if (!!start && !!end) {
+      reducedQuery['createdAt'] = { $gte: start, $lte: end };
+    } else {
+      if (!!start && !end) {
+        reducedQuery['createdAt'] = { $gte: start };
+      } else if (!start && !!end) {
+        reducedQuery['createdAt'] = { $lte: end };
+      }
+    }
+    return reducedQuery;
   }
 }

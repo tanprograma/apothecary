@@ -59,7 +59,7 @@ export class StatisticsFilterComponent {
       query['store'] = this.outletStore.findStore(ogQuery.store)._id;
     }
     if (!!ogQuery.product) {
-      query['product'] = ogQuery.product;
+      query['product'] = this.productsStore.findProduct(ogQuery.product)._id;
     }
     if (!!ogQuery.start) {
       query['start'] = this.parseDate(ogQuery.start);
@@ -70,6 +70,6 @@ export class StatisticsFilterComponent {
     return query;
   }
   parseDate(d: string) {
-    return new Date(d).getTime();
+    return new Date(d).toISOString();
   }
 }

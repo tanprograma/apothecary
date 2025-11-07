@@ -11,3 +11,9 @@ export class Statistics {
     quantity: number;
   };
 }
+export interface StatisticQuery {
+  product?: string;
+  store?: string;
+  start?: string;
+  end?: string;
+}
