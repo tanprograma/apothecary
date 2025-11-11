@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { OutletsStore } from '../../app-stores/outlet.store';
 
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, Location } from '@angular/common';
 import { TracerReport } from '../../interfaces/tracer';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAdd } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,7 @@ import { Notification } from '../../app-stores/notification.store';
 import { SearchBoxComponent } from '../../components/search-box/search-box.component';
 import { ActivatedRoute } from '@angular/router';
 import { TracerService } from '../../services/tracer.service';
+import { CancelButtonComponent } from '../cancel-button/cancel-button.component';
 @Component({
   selector: 'tracer-manage',
   imports: [
@@ -18,6 +19,7 @@ import { TracerService } from '../../services/tracer.service';
     FontAwesomeModule,
     TracerFormComponent,
     SearchBoxComponent,
+    CancelButtonComponent,
   ],
   templateUrl: './tracer-manage.component.html',
   styleUrl: './tracer-manage.component.scss',
@@ -25,7 +27,7 @@ import { TracerService } from '../../services/tracer.service';
 export class TracerManageComponent {
   plusIcon = faAdd;
   outletStore = inject(OutletsStore);
-
+  location = inject(Location);
   notification = inject(Notification);
   route = inject(ActivatedRoute);
   tracerService = inject(TracerService);
@@ -33,6 +35,9 @@ export class TracerManageComponent {
   tracerReport: TracerReport | null = null;
   ngOnInit() {
     this.getTracer();
+  }
+  back() {
+    this.location.back();
   }
   getTracerID() {
     return this.route.snapshot.paramMap.get('tracerID');
