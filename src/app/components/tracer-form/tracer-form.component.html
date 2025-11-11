@@ -1,4 +1,77 @@
-<form class="component" [formGroup]="tracerForm" (ngSubmit)="setTracer()">
+<div class="component">
+  <div class="flex flex-center">
+    <button class="btn btn-primary" (click)="toggleStockTakingForm()">
+      add stock taking date
+    </button>
+  </div>
+  @if (showStockTakingForm) {
+  <form class="" [formGroup]="tracerForm" (ngSubmit)="setTracerDate()">
+    <div class="component flex flex-center">
+      <div class="control">
+        <input
+          type="date"
+          name="created_on"
+          id="created_on"
+          formControlName="created_on"
+          class="input-primary"
+        />
+      </div>
+
+      <div class="control">
+        <button
+          class="btn-primary--round"
+          [disabled]="tracerForm.invalid"
+          type="submit"
+        >
+          <fa-icon [icon]="plusIcon"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </form>
+  }
+</div>
+<div class="component">
+  <search-box (emitSearch)="filterTracers($event)"></search-box>
+  <table>
+    <thead>
+      <tr>
+        <th>sn</th>
+        <th>product</th>
+        <th>unit</th>
+        <th>quantity</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of inventoriesStore.displayedInventories(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ item.product.name }}</td>
+        <td>smallest</td>
+        <td>
+          <input
+            type="number"
+            [placeholder]="item.tracer ?? 0"
+            (keyup)="setTracer($event, item._id)"
+          />
+        </td>
+        <td>
+          <button class="btn btn-primary" (click)="saveTracer(item)">
+            set
+          </button>
+        </td>
+        <td>
+          <a class="btn btn-primary" [routerLink]="'/view-tracer/' + item._id">
+            view
+          </a>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- <form class="component" [formGroup]="tracerForm" (ngSubmit)="setTracer()">
   <div class="component flex flex-center">
     <div class="control">
       <input
@@ -61,4 +134,4 @@
       </button>
     </div>
   </div>
-</form>
+</form> -->

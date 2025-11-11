@@ -8,12 +8,18 @@ import { ShopComponent } from './pages/shop/shop.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { LoginComponent } from './pages/login/login.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
+import { TracerManageComponent } from './components/tracer-manage/tracer-manage.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
   {
     path: 'home',
     component: HomeComponent,
+  },
+
+  {
+    path: 'view-tracer/:tracerID',
+    component: TracerManageComponent,
   },
   {
     path: 'statistics',

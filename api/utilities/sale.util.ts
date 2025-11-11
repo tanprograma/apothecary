@@ -1,9 +1,10 @@
 import { models } from 'mongoose';
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 import { SaleModel } from '../models/sale';
-import { StatisticQuery } from '../../src/app/interfaces/statistics';
+
 import { ISale } from '../../src/app/app-stores/sale.store';
 import { findIndex } from 'rxjs';
+import { StatisticQuery } from '../../src/app/interfaces/statistics';
 class Summary {
   [product: string]: any;
 }

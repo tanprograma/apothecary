@@ -5,6 +5,8 @@ import { HttpService } from './http.service';
 import { OriginService } from './origin.service';
 import { Notification } from '../app-stores/notification.store';
 import { Tracer, TracerReport } from '../interfaces/tracer';
+import { IInventory } from '../app-stores/inventory.store';
+import { Product } from '../interfaces/product';
 
 @Injectable({
   providedIn: 'root',
@@ -22,22 +24,39 @@ export class TracerService {
 
     return this.http.get<TracerReport[]>(api);
   }
-  async postTracer(payload: {
-    value: number;
-    created_on: string;
-    store: string;
-    product: string;
-  }) {
+  async getTracer(tracerID: string) {
+    const api = `${this.origin}/api/tracers/find?store=${
+      this.outletStore.selectedStore()?._id
+    }&&tracerID=${tracerID}`;
+
+    return this.http.get<TracerReport>(api);
+  }
+  async postTracer(payload: Partial<IInventory<Product, IStore>>) {
     this.notificationService.updateNotification({
       message: 'creating new tracer.',
       loading: true,
     });
     const api = `${this.origin}/api/tracers`;
     const res = await this.http.post<
-      Partial<{ value: number; created_on: string }>,
-      PostResponse<TracerReport>
+      Partial<IInventory<Product, IStore>>,
+      PostResponse<{ _id: string; tracer: number }>
     >(api, payload);
 
     return res;
+  }
+  async postTracerDate(payload: Partial<IStore>) {
+    this.notificationService.updateNotification({
+      message: 'creating new tracer.',
+      loading: true,
+    });
+    const api = `${this.origin}/api/tracers/date`;
+    const { status, result } = await this.http.patch<
+      Partial<IStore>,
+      PostResponse<Partial<IStore>>
+    >(api, payload);
+    if (!!status) {
+      this.outletStore.setTracerDate(result as Partial<IStore>);
+    }
+    return status;
   }
 }

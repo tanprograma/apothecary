@@ -1,0 +1,80 @@
+<div class="page">
+  <div class="component action-header">
+    <h2 class="text-center">
+      {{ outletStore.selectedStore()?.name }} &nbsp;tracer report
+    </h2>
+  </div>
+
+  <div class="component">
+    <table>
+      <caption>
+        product :&nbsp;{{
+          tracerReport?.product ?? ""
+        }}
+      </caption>
+      <thead>
+        <tr>
+          <th>parameter</th>
+          <th>value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>unit</td>
+          <td>smallest</td>
+        </tr>
+        <tr>
+          <td>initial</td>
+          <td>{{ tracerReport?.quantity ?? 0 }}</td>
+        </tr>
+        <tr>
+          <td>received</td>
+          <td>{{ tracerReport?.received ?? 0 }}</td>
+        </tr>
+        <tr>
+          <td>purchased</td>
+          <td>{{ tracerReport?.purchased ?? 0 }}</td>
+        </tr>
+        <tr>
+          <td>issued</td>
+          <td>{{ tracerReport?.issued ?? 0 }}</td>
+        </tr>
+        <tr>
+          <td>sold</td>
+          <td>{{ tracerReport?.dispensed ?? 0 }}</td>
+        </tr>
+
+        <tr>
+          <td>total-received</td>
+          <td>{{ totalReceived() }}</td>
+        </tr>
+        <tr>
+          <td>total-issued</td>
+          <td>{{ totalIssued() }}</td>
+        </tr>
+        <tr>
+          <td>comp-available(A)</td>
+          <td>{{ getComputed() }}</td>
+        </tr>
+        <tr>
+          <td>available(B)</td>
+          <td>{{ tracerReport?.available ?? 0 }}</td>
+        </tr>
+        <tr [class.positive]="isPositive()" [class.negative]="!isPositive()">
+          <td>A&minus;B</td>
+          <td>{{ getDifference() }}</td>
+        </tr>
+        <tr>
+          <td>status</td>
+          @if(isPositive()){
+          <td>&uarr; issue by {{ absDiff() }}</td>
+          }@else if(!isPositive()){
+          <td>&darr; issue by {{ absDiff() }}</td>
+          }@else {
+          <td>balanced</td>
+          }
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

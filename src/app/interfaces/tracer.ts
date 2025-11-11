@@ -3,7 +3,7 @@ export interface Tracer {
   store: string;
   quantity: number;
   available: number;
-  created_on: string;
+  tracerID: string;
 }
 export interface TracerReport extends Tracer {
   received: number;

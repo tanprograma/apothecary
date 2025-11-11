@@ -123,6 +123,7 @@ export class InventoryUtil {
     prices,
     _id,
     expiry,
+    tracer,
   }: any) {
     // returns a mapped prescription which is usable
     const completeProduct = this.findProduct(product);
@@ -136,6 +137,7 @@ export class InventoryUtil {
       quantity,
       prices,
       _id,
+      tracer,
       store: { _id: completeStore._id, name: completeStore.name },
       expiry: expiry || 'not set',
     };

@@ -29,7 +29,7 @@ export class TracersComponent {
 
   constructor() {}
   ngOnInit() {
-    this.getTracers();
+    // this.getTracers();
   }
   getTracers() {
     this.notification.updateNotification({ loading: true });

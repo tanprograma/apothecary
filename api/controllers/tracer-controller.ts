@@ -7,57 +7,109 @@ import { ProductModel } from '../models/product';
 import { InventoryModel } from '../models/inventory';
 import { SaleModel } from '../models/sale';
 import { PurchaseModel } from '../models/purchase';
+import { StoreModel } from '../models/store';
 
+export const postTracersDate = async (req: Request, res: Response) => {
+  try {
+    const { name, stock_taking } = req.body;
+    const store_req = await StoreModel.findOne({ name });
+    if (!!store_req) {
+      store_req['stock_taking'] = stock_taking;
+      const store = await store_req.save();
+      res.status(200).json({ result: store, status: true });
+    } else {
+      res.status(500).json({ status: false });
+    }
+  } catch (error) {
+    res.status(500).json({ status: false });
+  }
+};
 export const getTracers = async (req: Request, res: Response) => {
   try {
     const { store } = req.query;
-    const [tracers, products] = await Promise.all([
+    const [tracers, products, __store] = await Promise.all([
       InventoryModel.find({ store, tracer: { $ne: null } }),
 
       ProductModel.find(),
+      StoreModel.findOne({ _id: store }),
     ]);
-    const mappedTracers = tracers.map((tracer) => ({
-      product: tracer.product,
-      store: tracer.store,
-      quantity: tracer.tracer as number,
+    const mappedTracers = tracers.reduce((sum, tracer) => {
+      sum[tracer.product] = {
+        product: tracer.product,
+        store: tracer.store,
+        quantity: tracer.tracer as number,
+        tracerID: tracer._id,
+        available: tracer.quantity,
 
-      available: tracer.quantity,
-
-      created_on: tracer.created_on as string,
-    }));
-    const tracerReports = await generateTracerReports(mappedTracers, products);
+        dispensed: 0,
+        issued: 0,
+        received: 0,
+        purchased: 0,
+      };
+      return sum;
+    }, {} as { [key: string]: TracerReport });
+    const tracerReports = await generateTracerReports(
+      mappedTracers,
+      products,
+      store as string,
+      __store?.stock_taking as string
+    );
 
     res.status(200).json(tracerReports);
   } catch (error) {
     res.status(500).json({ message: 'Server Error', error });
   }
 };
-export const createTracer = async (req: Request, res: Response) => {
-  const { store, product, created_on, value } = req.body;
+export const getTracer = async (req: Request, res: Response) => {
   try {
-    const [newTracer, products] = await Promise.all([
-      InventoryModel.findOne({ store, product }),
+    const { store, tracerID } = req.query;
+    const [tracers, products, __store] = await Promise.all([
+      InventoryModel.find({ _id: tracerID }),
+
       ProductModel.find(),
+      StoreModel.findOne({ _id: store }),
     ]);
+    const mappedTracers = tracers.reduce((sum, tracer) => {
+      sum[tracer.product] = {
+        product: tracer.product,
+        store: '',
+        quantity: tracer.tracer as number,
+
+        available: tracer.quantity,
+        tracerID: tracer._id,
+
+        dispensed: 0,
+        issued: 0,
+        received: 0,
+        purchased: 0,
+      };
+      return sum;
+    }, {} as { [key: string]: TracerReport });
+    const tracerReports = await generateTracerReports(
+      mappedTracers,
+      products,
+      store as string,
+      __store?.stock_taking as string
+    );
+
+    res.status(200).json(tracerReports[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
+  }
+};
+export const createTracer = async (req: Request, res: Response) => {
+  const { tracer, _id } = req.body;
+  try {
+    const newTracer = await InventoryModel.findOne({ _id });
+
     if (!!newTracer) {
-      newTracer.tracer = value;
-      newTracer.created_on = created_on;
+      newTracer.tracer = tracer;
+
       await newTracer.save();
       // creates a new tracer
-      const tracers = await generateTracerReports(
-        [
-          {
-            product,
-            quantity: value,
-            available: newTracer.quantity,
-            store,
-            created_on,
-          },
-        ],
-        products
-      );
+
       // returns the new Tracer
-      res.status(201).json({ result: tracers[0], status: true });
+      res.status(201).json({ result: { tracer, _id }, status: true });
       return;
     } else {
       res.status(201).json({ status: false });
@@ -78,67 +130,90 @@ export function tracerMapper(
 }
 
 export async function generateTracerReports(
-  tracers: Tracer[],
-  products: any[]
+  tracerContainer: { [key: string]: TracerReport },
+  products: any[],
+  store: string,
+  created_on: string
 ): Promise<TracerReport[]> {
-  return Promise.all(
-    tracers.map(async (tracer) => {
-      const [purchasedItems, receivedItems, issuedItems, dispensedItems] =
-        await Promise.all([
-          PurchaseModel.find({
-            destination: tracer.store,
-            'products.product': tracer.product,
-            completed: true,
-            createdAt: { $gte: tracer.created_on },
-          }),
-          RequestModel.find({
-            destination: tracer.store,
-            'products.product': tracer.product,
-            completed: true,
-            createdAt: { $gte: tracer.created_on },
-          }),
-          RequestModel.find({
-            source: tracer.store,
-            'products.product': tracer.product,
-            completed: true,
-            createdAt: { $gte: tracer.created_on },
-          }),
-          SaleModel.find({
-            store: tracer.store,
-            'products.product': tracer.product,
-            createdAt: { $gte: tracer.created_on },
-          }),
-        ]);
+  const [purchasedItems, receivedItems, issuedItems, dispensedItems] =
+    await Promise.all([
+      PurchaseModel.find({
+        destination: store,
 
-      const purchased = purchasedItems.reduce((sum, request) => {
-        const item = request.products.find((p) => p.product === tracer.product);
-        return sum + (item ? item.received * item.unit_value : 0);
-      }, 0);
-      const issued = issuedItems.reduce((sum, request) => {
-        const item = request.products.find((p) => p.product === tracer.product);
-        return sum + (item ? item.received * item.unit_value : 0);
-      }, 0);
-      const dispensed =
-        dispensedItems.reduce((sum, request) => {
-          const item = request.products.find(
-            (p) => p.product === tracer.product
-          );
-          return sum + (item ? item.quantity * item.unit_value : 0);
-        }, 0) || 0;
+        completed: true,
+        createdAt: { $gte: created_on },
+      }),
+      RequestModel.find({
+        destination: store,
 
-      const received = receivedItems.reduce((sum, request) => {
-        const item = request.products.find((p) => p.product === tracer.product);
-        return sum + (item ? item.received * item.unit_value : 0);
-      }, 0);
+        completed: true,
+        createdAt: { $gte: created_on },
+      }),
+      RequestModel.find({
+        source: store,
 
-      return {
-        ...tracer,
-        product: products.find((p) => p._id.toString() === tracer.product).name,
-        issued,
-        dispensed,
-        received,
-        purchased,
-      };
-    })
-  );
+        completed: true,
+        createdAt: { $gte: created_on },
+      }),
+      SaleModel.find({
+        store: store,
+
+        createdAt: { $gte: created_on },
+      }),
+    ]);
+  tracerContainer = purchasedItems.reduce((sum, request) => {
+    // increments purchased value of items in the container
+    for (let item of request.products) {
+      if (!!sum[item.product]) {
+        sum[item.product].purchased =
+          sum[item.product].purchased + item.received * item.unit_value;
+      }
+    }
+    return sum;
+  }, tracerContainer);
+  tracerContainer = issuedItems.reduce((sum, request) => {
+    // increments purchased value of items in the container
+    for (let item of request.products) {
+      if (!!sum[item.product]) {
+        sum[item.product].issued =
+          sum[item.product].issued + item.received * item.unit_value;
+      }
+    }
+    return sum;
+  }, tracerContainer);
+  tracerContainer = dispensedItems.reduce((sum, request) => {
+    // increments purchased value of items in the container
+    for (let item of request.products) {
+      if (!!sum[item.product as string]) {
+        sum[item.product as string].dispensed =
+          sum[item.product as string].dispensed +
+          item.quantity * item.unit_value;
+      }
+    }
+    return sum;
+  }, tracerContainer);
+
+  tracerContainer = receivedItems.reduce((sum, request) => {
+    // increments purchased value of items in the container
+    for (let item of request.products) {
+      if (!!sum[item.product]) {
+        sum[item.product].received =
+          sum[item.product].received + item.received * item.unit_value;
+      }
+    }
+    return sum;
+  }, tracerContainer);
+
+  return Object.values(tracerContainer).map((tracer) => ({
+    ...tracer,
+    product: products.find((p) => p._id.toString() === tracer.product).name,
+  }));
+  // return {
+  //   ...tracer,
+  //   product: products.find((p) => p._id.toString() === tracer.product).name,
+  //   issued,
+  //   dispensed,
+  //   received,
+  //   purchased,
+  // };
 }

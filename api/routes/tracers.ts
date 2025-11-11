@@ -1,10 +1,17 @@
 import express from 'express';
-import { getTracers, createTracer } from '../controllers/tracer-controller';
+import {
+  getTracers,
+  getTracer,
+  createTracer,
+  postTracersDate,
+} from '../controllers/tracer-controller';
 
 const router = express.Router();
 
 router.get('/', getTracers);
+router.get('/find', getTracer);
 router.post('/', createTracer);
+router.patch('/date', postTracersDate);
 
 export default router;
 //     amount: amount + item.price * item.quantity,

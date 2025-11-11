@@ -1,8 +1,12 @@
-<div>
-  <input
-    type="text"
-    class="input-primary"
-    placeholder="search product"
-    (keyup)="onSearch($event)"
-  />
-</div>
+<form class="component" [formGroup]="searchForm">
+  <div class="control">
+    <input
+      type="text"
+      class="input-primary"
+      placeholder="search product"
+      [value]="predicate ?? ''"
+      formControlName="query"
+      (keyup)="onSearch()"
+    />
+  </div>
+</form>

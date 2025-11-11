@@ -235,37 +235,26 @@ export const InventoriesStore = signalStore(
         const res = await tracerService.getTracers();
         patchState(store, (state) => ({ ...state, tracers: res }));
       },
-      async postTracer(payload: {
-        value: number;
-        created_on: string;
-        store: string;
-        product: string;
-      }) {
+      setTracer(payload: { tracer: number; _id: string }) {
+        patchState(store, (state) => ({
+          ...state,
+          inventory: state.inventory.map((item) => {
+            return item._id == payload._id
+              ? { ...item, tracer: payload.tracer }
+              : item;
+          }),
+        }));
+      },
+      async postTracer(payload: Partial<IInventory<Product, IStore>>) {
         const { status, result } = await tracerService.postTracer(payload);
-        if (!!result) {
-          const found = store
-            .tracers()
-            .find((item) => item.product == result.product);
-          if (!found) {
-            patchState(store, (state) => ({
-              ...state,
-              tracers: [result, ...state.tracers],
-            }));
-          } else {
-            patchState(store, (state) => ({
-              ...state,
-              tracers: state.tracers.map((tracer) => {
-                return tracer.product == result.product
-                  ? {
-                      ...tracer,
-                      quantity: result.quantity,
-                      created_on: result.created_on,
-                    }
-                  : tracer;
-              }),
-            }));
-          }
-        }
+        console.log(result);
+        patchState(store, (state) => ({
+          ...state,
+          inventory: state.inventory.map((item) => {
+            return item._id == result?._id ? { ...item, ...result } : item;
+          }),
+        }));
+
         return status;
       },
 

@@ -11,6 +11,7 @@ import { computed, inject } from '@angular/core';
 import { LoggerService } from '../services/logger.service';
 import { OutletService } from '../services/outlet.service';
 import { adminLinks } from '../app.utils/admin-links.util';
+import { TracerService } from '../services/tracer.service';
 
 const shopLinks: {
   name: string;
@@ -29,6 +30,10 @@ const shopLinks: {
   {
     name: 'purchase',
     url: `purchase`,
+  },
+  {
+    name: 'stock-taking',
+    url: `stock-taking`,
   },
   {
     name: 'tracers',
@@ -75,6 +80,7 @@ const shopStatisticsLinks: {
 ];
 export interface IStore {
   name: string;
+  stock_taking?: string;
   _id: string;
 }
 type StoresState = {
@@ -85,8 +91,8 @@ type StoresState = {
 const initialState: StoresState = {
   stores: [],
   selectedStore: {
-    name: 'mainclinic',
-    _id: '6815c9a685857d37ac651bcc',
+    name: '',
+    _id: '',
   },
   isLoading: false,
 };
@@ -140,6 +146,7 @@ export const OutletsStore = signalStore(
     (
       store,
       storeService = inject(OutletService),
+
       logger = inject(LoggerService)
     ) => ({
       setSelectedStore(item?: IStore) {
@@ -155,6 +162,14 @@ export const OutletsStore = signalStore(
         } catch (error) {
           logger.log((error as { message: string }).message);
         }
+      },
+      setTracerDate(payload: Partial<IStore>) {
+        patchState(store, (state) => ({
+          ...state,
+          stores: state.stores.map((item) => {
+            return item._id == payload?.name ? { ...item, ...payload } : item;
+          }),
+        }));
       },
       findStore(identifier: string) {
         return store.stores().find((item) => {

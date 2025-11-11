@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose';
 
-import { Store } from '../../src/app/interfaces/store';
-const schema = new Schema<Store>({
+import { IStore } from '../../src/app/app-stores/outlet.store';
+const schema = new Schema<IStore>({
   name: { type: String, lowercase: true },
+  stock_taking: String,
 });
 export const StoreModel = model('Store', schema);

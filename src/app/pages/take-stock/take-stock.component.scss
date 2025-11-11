@@ -1,0 +1,40 @@
+.action-header {
+  position: relative;
+}
+.action-header a {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.page {
+  background-color: lightgrey;
+}
+.data-frame:hover {
+  cursor: pointer;
+  background-color: rgb(180, 245, 180);
+}
+tr {
+  color: green;
+}
+.positive {
+  color: rgb(128, 0, 119);
+}
+.negative {
+  color: red;
+}
+
+a {
+  margin-top: 5px;
+  height: auto;
+  width: auto;
+  display: block;
+  min-width: 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+// td,
+// th {
+//   border: 1px solid black;
+// }
