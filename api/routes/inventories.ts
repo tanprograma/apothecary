@@ -12,6 +12,17 @@ router.get('', async (req, res) => {
   );
   res.send(new InventoryUtil(data).summary());
 });
+router.get('/raw', async (req, res) => {
+  try {
+    const { store } = req.query;
+
+    const data = await InventoryModel.find(!store ? {} : { store });
+    res.send(data);
+  } catch (error: unknown) {
+    console.log((error as { message: string }).message);
+    res.send([]);
+  }
+});
 
 router.get('/store/:id', async (req, res) => {
   const query = req.query;

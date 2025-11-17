@@ -35,10 +35,10 @@ const shopLinks: {
     name: 'stock-taking',
     url: `stock-taking`,
   },
-  {
-    name: 'tracers',
-    url: `tracers`,
-  },
+  // {
+  //   name: 'tracers',
+  //   url: `tracers`,
+  // },
   {
     name: 'expired',
     url: `expired`,

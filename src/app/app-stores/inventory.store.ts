@@ -236,6 +236,7 @@ export const InventoriesStore = signalStore(
         patchState(store, (state) => ({ ...state, tracers: res }));
       },
       setTracer(payload: { tracer: number; _id: string }) {
+        if (!payload.tracer) return;
         patchState(store, (state) => ({
           ...state,
           inventory: state.inventory.map((item) => {

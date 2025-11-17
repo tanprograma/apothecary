@@ -31,11 +31,55 @@
   }
 </div>
 <div class="component">
-  <search-box (emitSearch)="filterTracers($event)"></search-box>
+  <h2 class="text-center">tracer item form</h2>
+  <form
+    class="flex component"
+    [formGroup]="tracerItemForm"
+    (ngSubmit)="setTracer()"
+  >
+    <div class="control">
+      <input
+        class="input-primary"
+        list="inventories"
+        formControlName="tracerItem"
+        placeholder="eg...paracetamol"
+      />
+      <datalist id="inventories">
+        @for (item of inventoriesStore.inventory(); track $index) {
+        <option [value]="item.product.name">{{ item.product.name }}</option>
+        }
+      </datalist>
+    </div>
+    <div class="control">
+      <input
+        class="input-primary"
+        type="text"
+        value="smallest"
+        name="tracerUnit"
+        id="tracerUnit"
+      />
+    </div>
+    <div class="control">
+      <input
+        class="input-primary"
+        type="number"
+        name="tracer"
+        id="tracer"
+        formControlName="tracerQuantity"
+      />
+    </div>
+    <div class="control">
+      <button type="submit" class="btn btn-primary">set tracer</button>
+    </div>
+  </form>
+</div>
+
+<div class="component">
+  <h2 class="text-center">tracer items</h2>
+  <search-box (emitSearch)="searchTracers($event)"></search-box>
   <table>
     <thead>
       <tr>
-        <th>sn</th>
         <th>product</th>
         <th>unit</th>
         <th>quantity</th>
@@ -45,21 +89,15 @@
     <tbody>
       @for (item of inventoriesStore.displayedInventories(); track $index) {
       <tr>
-        <td>{{ $index + 1 }}</td>
         <td>{{ item.product.name }}</td>
         <td>smallest</td>
+
         <td>
-          <input
-            type="number"
-            [placeholder]="item.tracer ?? 0"
-            (keyup)="setTracer($event, item._id)"
-          />
+          {{ item.tracer ?? 0 }}
         </td>
-        <td>
-          <button class="btn btn-primary" (click)="saveTracer(item)">
-            set
-          </button>
-        </td>
+        <!-- <td>
+          <button class="btn btn-primary" (click)="saveTracer()">set</button>
+        </td> -->
         <td>
           <a class="btn btn-primary" [routerLink]="'/view-tracer/' + item._id">
             view
@@ -70,68 +108,3 @@
     </tbody>
   </table>
 </div>
-
-<!-- <form class="component" [formGroup]="tracerForm" (ngSubmit)="setTracer()">
-  <div class="component flex flex-center">
-    <div class="control">
-      <input
-        type="date"
-        name="created_on"
-        id="created_on"
-        formControlName="created_on"
-        class="input-primary"
-      />
-    </div>
-
-    <div class="control">
-      <input
-        list="inventories"
-        id="product"
-        name="product"
-        placeholder="product name"
-        autocomplete="off"
-        formControlName="product"
-        class="input-primary"
-        (change)="setUnits()"
-      />
-      <datalist id="inventories">
-        @for (item of inventoriesStore.inventory(); track $index) {
-        <option [value]="item.product.name">
-          {{ item.product.name }}
-        </option>
-        }
-      </datalist>
-    </div>
-    <div class="control">
-      <select
-        class="input-primary"
-        name="unit"
-        id="unit"
-        formControlName="unit"
-      >
-        <option value="" selected disabled>select unit</option>
-        @for (item of units; track $index) {
-        <option [value]="item.name">{{ item.name }}</option>
-        }
-      </select>
-    </div>
-    <div class="control">
-      <input
-        type="number"
-        name="quantity"
-        id="quantity"
-        formControlName="quantity"
-        class="input-primary"
-      />
-    </div>
-    <div class="control">
-      <button
-        class="btn-primary--round"
-        [disabled]="tracerForm.invalid"
-        type="submit"
-      >
-        <fa-icon [icon]="plusIcon"></fa-icon>
-      </button>
-    </div>
-  </div>
-</form> -->

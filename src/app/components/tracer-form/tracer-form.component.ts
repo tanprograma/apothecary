@@ -15,6 +15,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SearchBoxComponent } from '../search-box/search-box.component';
 import { TracerService } from '../../services/tracer.service';
 import { RouterLink } from '@angular/router';
+import { Inventory } from '../../interfaces/inventory';
 
 @Component({
   selector: 'tracer-form',
@@ -49,6 +50,11 @@ export class TracerFormComponent {
   tracerForm = this.formBuilder.group({
     created_on: ['', Validators.required],
   });
+  tracerItemForm = this.formBuilder.group({
+    tracerItem: ['', Validators.required],
+    tracerQuantity: [0, Validators.required],
+  });
+  tracerItem: IInventory<Product, IStore> | null = null;
   toggleCart() {
     this.showMoreItems = !this.showMoreItems;
   }
@@ -83,20 +89,48 @@ export class TracerFormComponent {
   filterTracers(predicate: string) {
     this.inventoriesStore.updateFilter({ product: predicate });
   }
-  async setTracer(event: Event, _id: string) {
-    // dispenses the item
-    const tracer = (event.target as HTMLInputElement).value;
-    this.inventoriesStore.setTracer({
-      _id,
-      tracer: parseInt(tracer as string),
-    });
+  searchTracers(e: any) {
+    if (!e) return;
+    this.inventoriesStore.updateFilter({ product: e });
   }
-  async saveTracer(item: IInventory<Product, IStore>) {
+  getTracer(): { _id: string; tracer: number } {
+    const tracerName = this.tracerItemForm.value.tracerItem ?? '';
+
+    this.tracerItem = this.inventoriesStore
+      .inventory()
+      .find((item) => item.product.name == tracerName) as IInventory<
+      Product,
+      IStore
+    >;
+    return {
+      _id: this.tracerItem?._id,
+      tracer: this.tracerItemForm.value.tracerQuantity ?? 0,
+    };
+  }
+  async setTracer() {
     // dispenses the item
 
+    const payload = this.getTracer();
+    const status = await this.inventoriesStore.postTracer(payload);
+    if (!!status) {
+      this.reqState.updateNotification({
+        message: 'tracer successfully saved',
+        status,
+      });
+    } else {
+      this.reqState.updateNotification({
+        message: 'could not save the tracer',
+        status: false,
+      });
+    }
+  }
+  async saveTracer() {
+    // dispenses the item
+    if (!this.tracerItem) return;
+
     const status = await this.inventoriesStore.postTracer({
-      tracer: item.tracer as number,
-      _id: item._id,
+      tracer: this.tracerItem.tracer as number,
+      _id: this.tracerItem._id,
     });
     if (!!status) {
       this.reqState.updateNotification({

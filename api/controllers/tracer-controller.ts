@@ -37,7 +37,7 @@ export const getTracers = async (req: Request, res: Response) => {
       sum[tracer.product] = {
         product: tracer.product,
         store: tracer.store,
-        quantity: tracer.tracer as number,
+        quantity: tracer.tracer ?? 0,
         tracerID: tracer._id,
         available: tracer.quantity,
 
@@ -73,7 +73,7 @@ export const getTracer = async (req: Request, res: Response) => {
       sum[tracer.product] = {
         product: tracer.product,
         store: '',
-        quantity: tracer.tracer as number,
+        quantity: tracer.tracer ?? 0,
 
         available: tracer.quantity,
         tracerID: tracer._id,
@@ -105,12 +105,14 @@ export const createTracer = async (req: Request, res: Response) => {
     if (!!newTracer) {
       newTracer.tracer = tracer;
 
-      await newTracer.save();
+      const saved = await newTracer.save();
       // creates a new tracer
 
       // returns the new Tracer
-      res.status(201).json({ result: { tracer, _id }, status: true });
-      return;
+      res.status(201).json({
+        result: { tracer: saved.tracer, _id: saved._id },
+        status: true,
+      });
     } else {
       res.status(201).json({ status: false });
     }
