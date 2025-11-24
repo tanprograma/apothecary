@@ -29,6 +29,29 @@ router.get('/', async (req, res) => {
     res.send([]);
   }
 });
+router.get('/raw', async (req, res) => {
+  try {
+    const { createdAt } = req.query;
+    if (!createdAt) {
+      const sales = await SaleModel.find(req.query).sort({ createdAt: -1 });
+      res.send(sales);
+    } else {
+      const [year, month, day] = (createdAt as string).split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      const nextDate = new Date(year, month - 1, day);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const sales = await SaleModel.find({
+        ...req.query,
+        createdAt: { $gte: date.toISOString(), $lt: nextDate.toISOString() },
+      }).sort({ createdAt: -1 });
+
+      res.send(sales);
+    }
+  } catch (error) {
+    res.send([]);
+  }
+});
 
 router.get('/count', async (req, res) => {
   const { store } = req.query;
