@@ -3,6 +3,7 @@ import { InventoryModel } from '../models/inventory';
 import { StoreModel } from '../models/store';
 import { ProductModel } from '../models/product';
 import { InventoryUtil } from '../utilities/inventory.util';
+import { SaleModel } from '../models/sale';
 const router = Express.Router();
 router.get('', async (req, res) => {
   const query = req.query;
@@ -103,4 +104,32 @@ router.patch('/change-sales-info', async (req, res) => {
   }
   res.send(inventory);
 });
+router.patch('/harmonize', async (req, res) => {
+  // initializing sales info
+  const { store, item } = req.body;
+  const inventory = await InventoryModel.findOne({
+    store,
+    product: item.product,
+  });
+  if (!!inventory) {
+    const createdAt = new Date('12/4/2025').toISOString();
+    if (inventory.quantity > item.quantity) {
+      // reduce quantity
+      await SaleModel.create({
+        store,
+        products: [{ ...item, quantity: item.quantity - inventory.quantity }],
+        customer: store,
+        discount: 0,
+        createdAt,
+      });
+    }
+    inventory.quantity = item.quantity;
+
+    await inventory.save();
+    res.send({ result: inventory, status: true });
+  } else {
+    res.send({ status: false, result: item });
+  }
+});
+
 export default router;
