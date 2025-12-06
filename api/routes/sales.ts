@@ -85,8 +85,13 @@ router.get('/report', async (req, res) => {
   }
 });
 router.get('/report/raw', async (req, res) => {
-  const query = req.query;
-  const data = await SaleModel.find(query).sort({ createdAt: -1 });
+  const { start, end } = req.query;
+  const data = await SaleModel.find({
+    createdAt: {
+      $gte: start,
+      $lte: end,
+    },
+  }).sort({ createdAt: -1 });
   res.send(data);
 });
 router.get('/store-report', async (req, res) => {
