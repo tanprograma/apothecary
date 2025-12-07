@@ -117,7 +117,7 @@ router.patch('/harmonize', async (req, res) => {
       // reduce quantity
       await SaleModel.create({
         store,
-        products: [{ ...item, quantity: item.quantity - inventory.quantity }],
+        products: [{ ...item, quantity: inventory.quantity - item.quantity }],
         customer: store,
         discount: 0,
         createdAt,
