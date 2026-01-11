@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import { Inventory } from '../../src/app/interfaces/inventory';
 import { AnyARecord } from 'node:dns';
 import {
@@ -27,9 +27,9 @@ const InfoSchema = new Schema<{
   { _id: false }
 );
 
-const schema = new Schema<IInventory<string, string>>({
-  store: String,
-  product: String,
+const schema = new Schema<IInventory<any, any>>({
+  store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
   tracer: Number,
 
   prices: [priceSchema],

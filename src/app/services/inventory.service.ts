@@ -18,6 +18,11 @@ export class InventoryService {
   origin = inject(OriginService).origin;
   http = inject(HttpService);
   constructor() {}
+  async getInventoryQuery() {
+    return this.http.get<
+      Pick<IInventory<Product, IStore>, 'store' | 'product' | 'quantity'>[]
+    >(`${this.origin}/api/inventories/query`);
+  }
   async getInventoriesSummary(options: { [key: string]: string | number }) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {

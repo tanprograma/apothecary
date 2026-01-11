@@ -22,6 +22,10 @@ export class PurchasesService {
   outletStore = inject(OutletsStore);
   supplierStore = inject(SupplierStore);
   constructor() {}
+  async getPurchasesQuery(start: string, end: string) {
+    const api = `${this.origin}/api/purchases/query?start=${start}&&end=${end}`;
+    return this.http.get<IPurchase[]>(api);
+  }
   async getPurchasesSummary(options: { [key: string]: string | number }) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {

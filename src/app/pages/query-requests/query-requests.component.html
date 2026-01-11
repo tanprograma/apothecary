@@ -1,0 +1,107 @@
+<form [formGroup]="form" class="filter-form" (ngSubmit)="refresh()">
+  <label>Start</label>
+  <input type="date" name="start" id="start" formControlName="start" />
+
+  <label>end</label>
+  <input type="date" name="end" id="end" formControlName="end" />
+
+  <button (click)="refresh()" [disabled]="loading()">
+    @if (loading()) { Refreshing… } @else { Refresh Data }
+  </button>
+</form>
+<hr />
+<div>
+  <h2 class="text-center">filter requests</h2>
+  <form
+    [formGroup]="filterForm"
+    class="filter-form"
+    (ngSubmit)="filterRequests()"
+  >
+    <!-- Store Filter -->
+    <label>Source</label>
+    <select formControlName="source" (change)="filterRequests()">
+      <option value="" disabled>select store</option>
+
+      @for (store of outletsStore.stores(); track $index) {
+      <option [value]="store.name">{{ store.name }}</option>
+      }
+    </select>
+    <label>Destination</label>
+    <select formControlName="destination" (change)="filterRequests()">
+      <option value="" disabled>select store</option>
+
+      @for (store of outletsStore.stores(); track $index) {
+      <option [value]="store.name">{{ store.name }}</option>
+      }
+    </select>
+
+    <!-- Product Filter (input + datalist) -->
+    <label>Product</label>
+    <input
+      type="text"
+      list="productList"
+      name="product"
+      id="product"
+      formControlName="product"
+      list="productList"
+      placeholder="Search product..."
+      (keyup)="filterRequests()"
+    />
+
+    <datalist id="productList">
+      @for (inv of productsStore.products(); track $index) {
+      <option [value]="inv.name"></option>
+      }
+    </datalist>
+  </form>
+</div>
+
+<div class="actions">
+  <button (click)="filterRequests()">filter</button>
+  <button (click)="clearFilters()" [disabled]="loading()">Clear Filters</button>
+</div>
+<!-- Loading Indicator -->
+@if (loading()) {
+<div class="loading-bar"></div>
+}
+<hr />
+
+<section>
+  <h3>Transfer Results</h3>
+
+  @if (filteredRequests().length === 0) {
+  <p>No transfers found.</p>
+  } @else {
+
+  <table class="inventory-table">
+    <thead>
+      <tr>
+        <th>SN</th>
+
+        <th>Source</th>
+        <th>Destination</th>
+        <th>Product</th>
+        <th>Unit</th>
+        <th>Requested</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (inv of filteredRequests(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+
+        <td>{{ inv.source }}</td>
+        <td>{{ inv.destination }}</td>
+        <td>{{ inv.product.name }}</td>
+        <td>{{ inv.unit }}</td>
+        <td>{{ inv.requested }}</td>
+        <td>{{ inv.received }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  }
+</section>

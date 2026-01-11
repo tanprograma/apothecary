@@ -12,11 +12,7 @@ class Summary<T> {
   [product: string]: T;
 }
 export class SummaryStats {
-  constructor(
-    private products: Product[],
-    private stores: IStore[],
-    private inventories: IInventory<string, string>[]
-  ) {}
+  constructor(private inventories: IInventory<string, string>[]) {}
 
   get salesSummary() {
     return '';
@@ -24,45 +20,42 @@ export class SummaryStats {
   createSalesSummary() {
     const summary = new Summary<SalesSummary>();
     const raw = this.inventories.reduce(
-      (cum: Summary<SalesSummary>, curr: IInventory<string, string>) => {
-        const found = cum[curr.product];
+      (cum: Summary<SalesSummary>, curr: IInventory<any, any>) => {
+        const found = cum[curr.product.name];
         if (!!found) {
           // found then aggregate quantity and amount
-          cum[curr.product] = {
+          cum[curr.product.name] = {
             ...found,
             quantity: found.quantity + curr.sales.quantity,
-            amount: found.amount + curr.sales.amount,
+            amount:
+              found.amount +
+              curr.sales.amount /
+                this.findSmallestUnit(curr.product.units).value,
           };
         } else {
-          cum[curr.product] = {
-            product: curr.product,
+          cum[curr.product.name] = {
+            product: curr.product.name,
             quantity: curr.sales.quantity,
-            unit: '',
-            amount: curr.sales.amount,
+            unit: this.findLargestUnit(curr.product.units).name,
+
+            amount:
+              curr.sales.amount /
+              this.findSmallestUnit(curr.product.units).value,
           };
         }
         return cum;
       },
       summary
     );
-    return Object.values(raw).map((item: SalesSummary) => {
-      const product = this.findProduct(item.product) as Product;
-      const unit = this.findLargestUnit(product.units);
-      return {
-        ...item,
-        product: product.name,
-        unit: unit.name,
-        quantity: item.quantity / unit.value,
-      };
-    });
+    return Object.values(raw);
   }
 
-  private findProduct(id: any) {
-    return this.products.find((p) => p._id == id);
-  }
-  private findStore(id: any) {
-    return this.stores.find((p) => p._id == id);
-  }
+  // private findProduct(id: any) {
+  //   return this.products.find((p) => p._id == id);
+  // }
+  // private findStore(id: any) {
+  //   return this.stores.find((p) => p._id == id);
+  // }
 
   getInventoryItemValue(inventoryItem: any) {
     //   returns the value of inventory
@@ -93,9 +86,7 @@ export class SummaryStats {
   }
 }
 export class InventoryUtil {
-  constructor(
-    private DB: { stores: any[]; products: any[]; prescriptions: any[] }
-  ) {}
+  constructor(private DB: { prescriptions: any[] }) {}
   summary() {
     //   returns summary as InventorySummary
 
@@ -126,28 +117,18 @@ export class InventoryUtil {
     tracer,
   }: any) {
     // returns a mapped prescription which is usable
-    const completeProduct = this.findProduct(product);
-    const completeStore = this.findStore(store);
+
     return {
-      product: {
-        _id: completeProduct._id,
-        name: completeProduct.name,
-        units: completeProduct.units,
-      },
+      product,
       quantity,
       prices,
       _id,
       tracer,
-      store: { _id: completeStore._id, name: completeStore.name },
+      store,
       expiry: expiry || 'not set',
     };
   }
-  private findProduct(id: any) {
-    return this.DB.products.find((p) => p._id == id);
-  }
-  private findStore(id: any) {
-    return this.DB.stores.find((p) => p._id == id);
-  }
+
   private mapSummary(summary: Summary<InventorySummary>) {
     return Object.values(summary).map((item) => {
       return {
@@ -157,13 +138,24 @@ export class InventoryUtil {
     });
   }
   private addToSummary(summary: Summary<InventorySummary>, item: any) {
-    const found = summary[item.product];
-    const unit = this.findSmallestUnit(this.findProduct(item.product).units);
+    const found = summary[item.product._id];
+    if (!found) {
+      let largestUnit = this.findLargestUnit(item.product.units);
+      summary[item.product._id] = {
+        product: item.product.name,
+        unit: largestUnit.name,
+        unit_value: largestUnit.value,
+        quantity: item.quantity,
+        amount: this.getInventoryItemValue(item),
+      };
+      return;
+    }
+    // const unit = this.findSmallestUnit(this.findProduct(item.product).units);
     // item.unit_value does not exist on inventory
     //   1 is the smallest possible unit
-    summary[item.product] = {
+    summary[item.product._id] = {
       ...found,
-      quantity: found.quantity + item.quantity * unit.value,
+      quantity: found.quantity + item.quantity,
       amount: (found.amount as number) + this.getInventoryItemValue(item),
     };
   }
@@ -175,16 +167,7 @@ export class InventoryUtil {
   }
   private createSummaryContainer() {
     const summary = new Summary<InventorySummary>();
-    this.DB.products.forEach((item) => {
-      const largestUnit = this.findLargestUnit(item.units);
-      summary[item._id] = {
-        product: item.name,
-        unit: largestUnit.name,
-        unit_value: largestUnit.value,
-        quantity: 0,
-        amount: 0,
-      };
-    });
+
     return summary;
   }
   private findLargestUnit(units: any[]) {
@@ -216,33 +199,23 @@ export class InventoryUtil {
       return '';
     }
   }
-  static async find(
-    {
-      ProductModel,
-      StoreModel,
-      InventoryModel,
-    }: { ProductModel: any; StoreModel: any; InventoryModel: any },
-    query: any
-  ) {
+  static async find({ InventoryModel }: { InventoryModel: any }, query: any) {
     const parsedQuery = InventoryUtil.createDateQuery(query);
     const findOptions = !!query.store
       ? { ...parsedQuery, store: query.store }
       : parsedQuery;
-    const [prescriptions, stores, products] = await Promise.all([
-      !!query.limit
-        ? InventoryModel.find(findOptions)
-            .sort({ createdAt: -1 })
-            .limit(parseInt(query.limit))
-        : InventoryModel.find(findOptions).sort({ createdAt: -1 }),
-      StoreModel.find(),
-      ProductModel.find(),
-    ]);
+    const prescriptions = !!query.limit
+      ? await InventoryModel.find(findOptions)
+          .sort({ createdAt: -1 })
+          .limit(parseInt(query.limit))
+          .populate([{ path: 'store' }, { path: 'product' }])
+      : await InventoryModel.find(findOptions)
+          .sort({ createdAt: -1 })
+          .populate([{ path: 'store' }, { path: 'product' }]);
 
     return {
       // prescriptions as inventories
       prescriptions: prescriptions as any[],
-      stores: stores as any[],
-      products: products as any[],
     };
   }
 

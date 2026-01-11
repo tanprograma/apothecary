@@ -40,6 +40,12 @@ export class SalesService {
     const api = `${this.origin}/api/sales/create`;
     return this.http.post<Partial<ISale>, PostResponse<ISale>>(api, payload);
   }
+  async getSalesQuery(start: string, end: string) {
+    console.log({ start, end });
+
+    const api = `${this.origin}/api/sales/query?start=${start}&&end=${end}`;
+    return this.http.get<ISale[]>(api);
+  }
   async getStoreSales(storeID: string, options: { [key: string]: any } = {}) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {

@@ -10,11 +10,30 @@ const router = Express.Router();
 router.get('/', async (req, res) => {
   const query = req.query;
 
-  const data = await RequestUtil.find(
-    { ProductModel, StoreModel, RequestModel },
-    query
-  );
+  const data = await RequestUtil.find({ RequestModel }, query);
   res.send(new RequestUtil(data).summary());
+});
+router.get('/query/', async (req, res) => {
+  // returns data with populated store and product
+  try {
+    const { start, end } = req.query;
+    console.log({ start, end });
+    const requests = await RequestModel.find({
+      createdAt: { $gte: start, $lte: end },
+    })
+      .sort({ createdAt: -1 })
+      .populate([
+        { path: 'source' },
+        { path: 'destination' },
+        { path: 'products.product' },
+      ])
+      .select('source destination products createdAt');
+
+    res.send(requests);
+  } catch (error) {
+    console.log((error as { message: string }).message);
+    res.send([]);
+  }
 });
 router.get('/store/:id', async (req, res) => {
   const query = req.query;
@@ -24,7 +43,7 @@ router.get('/store/:id', async (req, res) => {
     res.send([]);
   } else {
     const data = await RequestUtil.find(
-      { ProductModel, StoreModel, RequestModel },
+      { RequestModel },
       { ...query, store: id }
     );
 
@@ -55,13 +74,13 @@ router.patch('/issue/:requestID', async (req, res) => {
   try {
     const transaction = await RequestModel.findOne({ _id: id });
     if (!!transaction) {
-      transaction.products = products;
-      transaction.completed = true;
+      transaction[products] = products;
+      transaction['completed'] = true;
       await transaction.save();
       // await addReceiveInfo(transaction);
       // await addIssueInfo(transaction);
       for (let item of products) {
-        await issue(item, transaction.source, transaction.destination);
+        await issue(item, transaction['source'], transaction['destination']);
       }
       res.send({ status: true });
     } else {
@@ -74,9 +93,14 @@ router.patch('/issue/:requestID', async (req, res) => {
 });
 router.post('/migrate', async (req, res) => {
   const transaction = await RequestModel.create(req.body);
-  if (!!transaction.completed) {
-    for (let item of transaction.products) {
-      await issue(item, transaction.source, transaction.destination, true);
+  if (!!transaction['completed']) {
+    for (let item of transaction['products'] as any[]) {
+      await issue(
+        item,
+        transaction['source'],
+        transaction['destination'],
+        true
+      );
     }
   }
 

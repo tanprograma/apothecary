@@ -29,6 +29,24 @@ router.get('/', async (req, res) => {
     res.send([]);
   }
 });
+router.get('/query', async (req, res) => {
+  // returns data with populated store and product
+  try {
+    const { start, end } = req.query;
+    console.log({ start, end });
+    const sales = await SaleModel.find({
+      createdAt: { $gte: start, $lte: end },
+    })
+      .sort({ createdAt: -1 })
+      .populate([{ path: 'store' }, { path: 'products.product' }])
+      .select('store products createdAt');
+
+    res.send(sales);
+  } catch (error) {
+    console.log((error as { message: string }).message);
+    res.send([]);
+  }
+});
 router.get('/raw', async (req, res) => {
   try {
     const { createdAt } = req.query;
@@ -64,18 +82,12 @@ router.get('/store/:id', async (req, res) => {
   const query = req.query;
   const { id } = req.params;
 
-  const data = await SaleUtil.find(
-    { ProductModel, StoreModel, SaleModel },
-    { ...query, store: id }
-  );
+  const data = await SaleUtil.find({ SaleModel }, { ...query, store: id });
 
   res.send(new SaleUtil(data).transform());
 });
 router.get('/report', async (req, res) => {
-  const data = await SaleUtil.find(
-    { ProductModel, StoreModel, SaleModel },
-    req.query
-  );
+  const data = await SaleUtil.find({ SaleModel }, req.query);
 
   try {
     res.send(new SaleUtil(data).summary());
@@ -96,10 +108,7 @@ router.get('/report/raw', async (req, res) => {
 });
 router.get('/store-report', async (req, res) => {
   try {
-    const data = await SaleUtil.find(
-      { ProductModel, StoreModel, SaleModel },
-      req.query
-    );
+    const data = await SaleUtil.find({ SaleModel }, req.query);
 
     res.send(new SaleUtil(data).transform());
   } catch (error) {

@@ -30,8 +30,8 @@ export interface IRequestItem {
 }
 export interface IRequest {
   _id: string;
-  destination: string;
-  source: string;
+  destination: any;
+  source: any;
 
   products: IRequestItem[];
   createdAt: string;

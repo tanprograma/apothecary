@@ -6,6 +6,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'database-query/**',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'view-tracer/:tracerID',
     renderMode: RenderMode.Client,
   },

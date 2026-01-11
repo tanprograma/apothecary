@@ -1,0 +1,89 @@
+<form [formGroup]="form" class="filter-form" (ngSubmit)="refresh()">
+  <label>Start</label>
+  <input type="date" name="start" id="start" formControlName="start" />
+
+  <label>end</label>
+  <input type="date" name="end" id="end" formControlName="end" />
+
+  <button (click)="refresh()" [disabled]="loading()">
+    @if (loading()) { Refreshing… } @else { Refresh Data }
+  </button>
+</form>
+<hr />
+<div>
+  <h2 class="text-center">filter sales</h2>
+  <form [formGroup]="filterForm" class="filter-form" (ngSubmit)="filterSales()">
+    <!-- Store Filter -->
+    <label>Store</label>
+    <select formControlName="store" (change)="filterSales()">
+      <option value="" disabled>All stores</option>
+
+      @for (store of outletsStore.stores(); track $index) {
+      <option [value]="store.name">{{ store.name }}</option>
+      }
+    </select>
+
+    <!-- Product Filter (input + datalist) -->
+    <label>Product</label>
+    <input
+      type="text"
+      list="productList"
+      name="product"
+      id="product"
+      formControlName="product"
+      list="productList"
+      placeholder="Search product..."
+      (keyup)="filterSales()"
+    />
+
+    <datalist id="productList">
+      @for (inv of productsStore.products(); track $index) {
+      <option [value]="inv.name"></option>
+      }
+    </datalist>
+  </form>
+</div>
+
+<div class="actions">
+  <button (click)="filterSales()">filter</button>
+  <button (click)="clearFilters()" [disabled]="loading()">Clear Filters</button>
+</div>
+<!-- Loading Indicator -->
+@if (loading()) {
+<div class="loading-bar"></div>
+}
+<hr />
+
+<section>
+  <h3>Sales Results</h3>
+
+  @if (filteredSales().length === 0) {
+  <p>No sales found.</p>
+  } @else {
+
+  <table class="inventory-table">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>Store</th>
+        <th>Product</th>
+        <th>Unit</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (inv of filteredSales(); track $index) {
+      <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ inv.store }}</td>
+        <td>{{ inv.product.name }}</td>
+        <td>{{ inv.unit }}</td>
+        <td>{{ inv.quantity }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  }
+</section>

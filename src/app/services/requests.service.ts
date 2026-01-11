@@ -22,6 +22,11 @@ export class RequestsService {
   constructor() {}
   // sale form api
 
+  async getRequestsQuery(start: string, end: string) {
+    const api = `${this.origin}/api/requests/query?start=${start}&&end=${end}`;
+
+    return this.http.get<IRequest[]>(api);
+  }
   async getRequestSummary(options: { [key: string]: string | number }) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {

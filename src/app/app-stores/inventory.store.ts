@@ -45,10 +45,7 @@ export interface InventoryInfo {
   amount: number;
   items: number;
 }
-export interface IInventory<
-  T extends Product | string,
-  K extends IStore | string
-> {
+export interface IInventory<T extends any, K extends any> {
   //inventory type
   _id: string;
   store: K;

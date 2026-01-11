@@ -22,14 +22,14 @@ export type SalesSummary = {
 };
 
 export interface ISaleItem {
-  product: string;
+  product: any;
   quantity: number;
   unit: string;
   unit_value: number;
   price: number;
 }
 export interface ISale {
-  store: string;
+  store: any;
   customer: string;
   // date: number;
   discount: number;

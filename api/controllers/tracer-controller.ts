@@ -163,9 +163,9 @@ export async function generateTracerReports(
         createdAt: { $gte: created_on },
       }),
     ]);
-  tracerContainer = purchasedItems.reduce((sum, request) => {
+  tracerContainer = purchasedItems.reduce((sum, request: any) => {
     // increments purchased value of items in the container
-    for (let item of request.products) {
+    for (let item of request['products']) {
       if (!!sum[item.product]) {
         sum[item.product].purchased =
           sum[item.product].purchased + item.received * item.unit_value;
@@ -173,9 +173,9 @@ export async function generateTracerReports(
     }
     return sum;
   }, tracerContainer);
-  tracerContainer = issuedItems.reduce((sum, request) => {
+  tracerContainer = issuedItems.reduce((sum, request: any) => {
     // increments purchased value of items in the container
-    for (let item of request.products) {
+    for (let item of request['products']) {
       if (!!sum[item.product]) {
         sum[item.product].issued =
           sum[item.product].issued + item.received * item.unit_value;
@@ -195,7 +195,7 @@ export async function generateTracerReports(
     return sum;
   }, tracerContainer);
 
-  tracerContainer = receivedItems.reduce((sum, request) => {
+  tracerContainer = receivedItems.reduce((sum, request: any) => {
     // increments purchased value of items in the container
     for (let item of request.products) {
       if (!!sum[item.product]) {

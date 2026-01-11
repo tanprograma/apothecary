@@ -9,6 +9,7 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { LoginComponent } from './pages/login/login.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { TracerManageComponent } from './components/tracer-manage/tracer-manage.component';
+import { DatabaseQueryComponent } from './pages/database-query/database-query.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/home' },
@@ -39,5 +40,13 @@ export const routes: Routes = [
     component: ShopComponent,
     loadChildren: () =>
       import('./routes/shop.routes').then((mod) => mod.routes),
+  },
+  {
+    path: 'database-query',
+    component: DatabaseQueryComponent,
+    loadChildren: () =>
+      import('./routes/database-query.routes').then(
+        (m) => m.DATABASE_QUERY_ROUTES
+      ),
   },
 ];
