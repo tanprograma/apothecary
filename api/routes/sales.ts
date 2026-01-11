@@ -83,6 +83,7 @@ router.get('/store/:id', async (req, res) => {
   const { id } = req.params;
 
   const data = await SaleUtil.find({ SaleModel }, { ...query, store: id });
+  console.log({ data, query, id });
 
   res.send(new SaleUtil(data).transform());
 });

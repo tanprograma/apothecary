@@ -155,6 +155,7 @@ export const SaleStore = signalStore(
         // returns store sales
         try {
           const res = await salesService.getStoreSales(storeID, options);
+          console.log(res);
 
           logger.log('sales fetched');
 
