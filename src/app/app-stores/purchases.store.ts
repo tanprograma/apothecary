@@ -31,8 +31,8 @@ export interface IPurchaseItem {
 }
 export interface IPurchase {
   _id: string;
-  destination: any;
-  source: any;
+  destination: string;
+  source: string;
 
   products: IPurchaseItem[];
   createdAt: string;

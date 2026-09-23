@@ -7,7 +7,10 @@ import { SaleModel } from '../models/sale';
 const router = Express.Router();
 router.get('', async (req, res) => {
   const query = req.query;
-  const data = await InventoryUtil.find({ InventoryModel }, query);
+  const data = await InventoryUtil.find(
+    { ProductModel, StoreModel, InventoryModel },
+    query
+  );
   res.send(new InventoryUtil(data).summary());
 });
 router.get('/raw', async (req, res) => {
@@ -21,26 +24,11 @@ router.get('/raw', async (req, res) => {
     res.send([]);
   }
 });
-router.get('/query', async (req, res) => {
-  // return the raw populated data
-  try {
-    const { store } = req.query;
-
-    const data = await InventoryModel.find(!store ? {} : { store }).populate([
-      { path: 'store' },
-      { path: 'product' },
-    ]);
-    res.send(data);
-  } catch (error: unknown) {
-    console.log((error as { message: string }).message);
-    res.send([]);
-  }
-});
 
 router.get('/store/:id', async (req, res) => {
   const query = req.query;
   const data = await InventoryUtil.find(
-    { InventoryModel },
+    { ProductModel, StoreModel, InventoryModel },
     { ...query, store: req.params.id }
   );
   res.send(new InventoryUtil(data).transform());

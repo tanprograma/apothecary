@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 
@@ -7,9 +7,9 @@ import {
   IPurchase,
   IPurchaseItem,
 } from '../../src/app/app-stores/purchases.store';
-const productSchema = new Schema<any>(
+const productSchema = new Schema<IPurchaseItem>(
   {
-    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    product: String,
     requested: Number,
 
     unit: String,
@@ -19,10 +19,10 @@ const productSchema = new Schema<any>(
   },
   { _id: false }
 );
-const schema = new Schema<any>(
+const schema = new Schema<IPurchase>(
   {
-    source: { type: mongoose.Schema.Types.ObjectId, ref: 'Supplier' },
-    destination: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+    source: String,
+    destination: String,
     products: [productSchema],
     completed: Boolean,
   },

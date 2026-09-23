@@ -22,14 +22,14 @@ export type SalesSummary = {
 };
 
 export interface ISaleItem {
-  product: any;
+  product: string;
   quantity: number;
   unit: string;
   unit_value: number;
   price: number;
 }
 export interface ISale {
-  store: any;
+  store: string;
   customer: string;
   // date: number;
   discount: number;
@@ -155,7 +155,6 @@ export const SaleStore = signalStore(
         // returns store sales
         try {
           const res = await salesService.getStoreSales(storeID, options);
-          console.log(res);
 
           logger.log('sales fetched');
 

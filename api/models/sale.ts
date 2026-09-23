@@ -1,9 +1,9 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { Sale } from '../../src/app/interfaces/sale';
 import { TransactionItem } from '../../src/app/interfaces/transaction-item';
 const productSchema = new Schema<TransactionItem>(
   {
-    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    product: String,
     quantity: Number,
     unit: String,
     unit_value: Number,
@@ -13,7 +13,7 @@ const productSchema = new Schema<TransactionItem>(
 );
 const schema = new Schema<Sale>(
   {
-    store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+    store: String,
     products: [productSchema],
     discount: Number,
     customer: String,

@@ -1,12 +1,12 @@
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 import {
   IRequest,
   IRequestItem,
 } from '../../src/app/app-stores/transfers.store';
-const productSchema = new Schema<any>(
+const productSchema = new Schema<IRequestItem>(
   {
-    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    product: String,
     requested: Number,
     unit: String,
     unit_value: Number,
@@ -15,10 +15,10 @@ const productSchema = new Schema<any>(
   },
   { _id: false }
 );
-const schema = new Schema<any>(
+const schema = new Schema<IRequest>(
   {
-    source: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
-    destination: { type: mongoose.Schema.Types.ObjectId, ref: 'Store' },
+    source: String,
+    destination: String,
     products: [productSchema],
     completed: Boolean,
   },

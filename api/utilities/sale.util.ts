@@ -9,7 +9,9 @@ class Summary {
   [product: string]: any;
 }
 export class SaleUtil {
-  constructor(private DB: { prescriptions: any[] }) {}
+  constructor(
+    private DB: { stores: any[]; products: any[]; prescriptions: any[] }
+  ) {}
   summary() {
     let summary = this.createSummaryContainer();
     summary = this.__getSummary(summary);
@@ -24,38 +26,35 @@ export class SaleUtil {
     return summary;
   }
   transform() {
-    const sales = this.DB.prescriptions.map((prescription) => {
+    return this.DB.prescriptions.map((prescription) => {
       return this.mapPrescription(prescription);
     });
-    return sales;
-    // console.log(sales[0]);
-    // return [];
   }
   private mapPrescription({ store, products, createdAt }: any) {
     // returns a mapped prescription which is usable
 
     return {
-      store: store.name,
+      store: this.findStore(store).name,
       products: products.map((p: any) => {
-        // const product = this.findProduct(p.product);
+        const product = this.findProduct(p.product);
         return {
           unit: p.unit,
           unit_value: p.unit_value,
-          product: p.product.name,
+          product: product.name,
           price: p.price,
           quantity: p.quantity,
-          category: p.product.category,
+          category: product.category,
         };
       }),
       createdAt,
     };
   }
-  // private findProduct(id: any) {
-  //   return this.DB.products.find((p) => p._id == id);
-  // }
-  // private findStore(id: any) {
-  //   return this.DB.stores.find((p) => p._id == id);
-  // }
+  private findProduct(id: any) {
+    return this.DB.products.find((p) => p._id == id);
+  }
+  private findStore(id: any) {
+    return this.DB.stores.find((p) => p._id == id);
+  }
   private mapSummary(summary: Summary) {
     return Object.values(summary).map((item) => {
       return {
@@ -67,44 +66,26 @@ export class SaleUtil {
     });
   }
   private addToSummary(summary: Summary, item: any) {
-    item.products.forEach((prescriptionItem: any) => {
-      const found = summary[prescriptionItem.product.name];
-      if (!found) {
-        this.findLargestUnit(prescriptionItem.product.units);
-        summary[prescriptionItem.product.name] = {
-          product: prescriptionItem.product.name,
-          unit: this.findLargestUnit(prescriptionItem.product.units).name,
-          unit_value: this.findLargestUnit(prescriptionItem.product.units)
-            .value,
-          quantity: 0,
-          amount: prescriptionItem.price * prescriptionItem.quantity,
-        };
-        return;
-      }
+    const found = summary[item.product];
 
-      summary[prescriptionItem.product.name] = {
-        ...found,
-        quantity:
-          found.quantity +
-          prescriptionItem.quantity * prescriptionItem.unit_value,
-        amount:
-          (found.amount as number) +
-          prescriptionItem.price * prescriptionItem.quantity,
-      };
-    });
+    summary[item.product] = {
+      ...found,
+      quantity: found.quantity + item.quantity * item.unit_value,
+      amount: (found.amount as number) + item.price * item.quantity,
+    };
   }
   private createSummaryContainer() {
     const summary = new Summary();
-    // this.DB.products.forEach((item) => {
-    //   const largestUnit = this.findLargestUnit(item.units);
-    //   summary[item._id] = {
-    //     product: item.name,
-    //     unit: largestUnit.name,
-    //     unit_value: largestUnit.value,
-    //     quantity: 0,
-    //     amount: 0,
-    //   };
-    // });
+    this.DB.products.forEach((item) => {
+      const largestUnit = this.findLargestUnit(item.units);
+      summary[item._id] = {
+        product: item.name,
+        unit: largestUnit.name,
+        unit_value: largestUnit.value,
+        quantity: 0,
+        amount: 0,
+      };
+    });
     return summary;
   }
   private findLargestUnit(units: any[]) {
@@ -114,17 +95,21 @@ export class SaleUtil {
       return 0;
     })[0];
   }
-  static async find(models: { SaleModel: any }, query: any) {
+  static async find(
+    models: { ProductModel: any; StoreModel: any; SaleModel: any },
+    query: any
+  ) {
     const findOptions = SaleUtil.queryReducer(query);
 
-    const prescriptions = !!query.limit
-      ? await models.SaleModel.find(findOptions)
-          .sort({ createdAt: -1 })
-          .limit(parseInt(query.limit))
-          .populate([{ path: 'store' }, { path: 'products.product' }])
-      : await models.SaleModel.find(findOptions)
-          .populate([{ path: 'store' }, { path: 'products.product' }])
-          .sort({ createdAt: -1 });
+    const [prescriptions, stores, products] = await Promise.all([
+      !!query.limit
+        ? models.SaleModel.find(findOptions)
+            .sort({ createdAt: -1 })
+            .limit(parseInt(query.limit))
+        : models.SaleModel.find(findOptions).sort({ createdAt: -1 }),
+      models.StoreModel.find(),
+      models.ProductModel.find(),
+    ]);
 
     return !!query.product
       ? {
@@ -133,13 +118,17 @@ export class SaleUtil {
               store,
               createdAt,
               products: products.filter(
-                (item) => item.product._id == query.product
+                (item) => item.product == query.product
               ),
             })
           ) as any[],
+          stores: stores as any[],
+          products: products as any[],
         }
       : {
           prescriptions: prescriptions as any[],
+          stores: stores as any[],
+          products: products as any[],
         };
   }
 
