@@ -7,6 +7,8 @@ import { ExpiryComponent } from '../pages/expiry/expiry.component';
 import { SellBackdateComponent } from '../pages/sell-backdate/sell-backdate.component';
 import { TracersComponent } from '../pages/tracers/tracers.component';
 import { TakeStockComponent } from '../pages/take-stock/take-stock.component';
+import { PurchaseBackdateComponent } from '../pages/purchase-backdate/purchase-backdate.component';
+import { PurchaseAddComponent } from '../pages/purchase-add/purchase-add.component';
 
 export const routes: Routes = [
   {
@@ -17,6 +19,8 @@ export const routes: Routes = [
   { path: 'sell-backdate', component: SellBackdateComponent },
   { path: 'request', component: RequestComponent },
   { path: 'purchase', component: PurchaseComponent },
+  { path: 'purchase-backdate', component: PurchaseBackdateComponent },
+  { path: 'purchase-add', component: PurchaseAddComponent },
   { path: 'stock-taking', component: TakeStockComponent },
   { path: 'expiry', component: ExpiryComponent },
   { path: 'tracers', component: TracersComponent },

@@ -32,12 +32,22 @@ router.get('/store/:id', async (req, res) => {
 
   const data = await PurchaseUtil.find(
     { ProductModel, StoreModel, PurchaseModel, SupplierModel },
-    { ...query, store: id }
+    { ...query, store: id },
   );
 
   res.send(new PurchaseUtil(data).transform());
 });
 router.post('/create', async (req, res) => {
+  const purchase = await PurchaseModel.create(req.body);
+
+  res.send({
+    status: true,
+    result: purchase,
+  });
+});
+router.post('/add', async (req, res) => {
+  // modify purchases without affecting the other schemas
+
   const purchase = await PurchaseModel.create(req.body);
 
   res.send({

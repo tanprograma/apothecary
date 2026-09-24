@@ -32,7 +32,7 @@ export class PurchasesService {
   }
   async getStorePurchases(
     storeID: string,
-    options: { [key: string]: any } = {}
+    options: { [key: string]: any } = {},
   ) {
     let parsedOptions = '';
     for (let key of Object.keys(options)) {
@@ -43,6 +43,24 @@ export class PurchasesService {
   }
   async postPurchase(payload: Partial<IPurchase>) {
     const api = `${this.origin}/api/purchases/create`;
+    return this.http
+      .post<Partial<IPurchase>, PostResponse<IPurchase>>(api, payload)
+      .then((res) => {
+        const { result } = res;
+        if (!!result) {
+          return {
+            ...res,
+            result: {
+              ...result,
+              source: this.supplierStore.findStore(result.source).name,
+              destination: this.outletStore.findStore(result.destination).name,
+            },
+          };
+        } else return res;
+      });
+  }
+  async addPurchase(payload: Partial<IPurchase>) {
+    const api = `${this.origin}/api/purchases/add`;
     return this.http
       .post<Partial<IPurchase>, PostResponse<IPurchase>>(api, payload)
       .then((res) => {

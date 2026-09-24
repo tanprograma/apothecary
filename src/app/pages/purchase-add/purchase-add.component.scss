@@ -1,0 +1,20 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  background-color: lightgrey;
+  overflow-y: scroll;
+}
+.transactions {
+  width: 80%;
+}
+.action-header {
+  position: relative;
+  width: 80%;
+}
+.action-header button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

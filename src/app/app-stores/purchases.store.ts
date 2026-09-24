@@ -99,7 +99,7 @@ export const PurchasesStore = signalStore(
       store,
       purchaseService = inject(PurchasesService),
       dateService = inject(DateService),
-      logger = inject(LoggerService)
+      logger = inject(LoggerService),
     ) => ({
       async getPurchasesSummary(options: { [key: string]: any }) {
         try {
@@ -114,7 +114,7 @@ export const PurchasesStore = signalStore(
       },
       async getStorePurchases(
         storeID: string,
-        options: { [key: string]: any }
+        options: { [key: string]: any },
       ) {
         try {
           const res = await purchaseService.getStorePurchases(storeID, options);
@@ -150,6 +150,34 @@ export const PurchasesStore = signalStore(
           logger.log('request posted successfully');
 
           const { date, time } = dateService.parseDate(result.createdAt);
+          // console.log({ date, time });
+          patchState(store, (state) => {
+            // adds
+            return {
+              ...state,
+              purchases: [
+                {
+                  ...result,
+                  products: state.cart,
+                },
+                ...state.purchases,
+              ],
+            };
+          });
+          // restore the cart
+          patchState(store, (state) => ({ ...state, cart: [] }));
+        }
+
+        return status;
+      },
+      async addPurchase(sale: Partial<IPurchase>) {
+        // this is for adding a purchase without affecting other dbs
+        const { status, result } = await purchaseService.addPurchase(sale);
+        // console.log({ result, status });
+        if (!!result) {
+          // adds to sales
+          logger.log('request posted successfully');
+
           // console.log({ date, time });
           patchState(store, (state) => {
             // adds
@@ -224,6 +252,6 @@ export const PurchasesStore = signalStore(
       setReceiveCart(items: IPurchaseItem[]) {
         patchState(store, (state) => ({ ...state, receiveCart: items }));
       },
-    })
-  )
+    }),
+  ),
 );
