@@ -23,6 +23,7 @@ import purchases from '../api/routes/purchases';
 import users from '../api/routes/user';
 import expired from '../api/routes/expired';
 import tracers from '../api/routes/tracers';
+import harmonization from '../api/routes/harmonization';
 import { LOCAL_DATABASE_URL } from '../api/db/connection-string';
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -50,7 +51,7 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  })
+  }),
 );
 app.use((req, res, next) => {
   res.append('Access-Control-Allow-Origin', ['*']);
@@ -80,6 +81,7 @@ app.use('/api/suppliers', suppliers);
 app.use('/api/users', users);
 app.use('/api/expiry', expired);
 app.use('/api/tracers', tracers);
+app.use('/api/harmonization', harmonization);
 
 /**
  * Handle all other requests by rendering the Angular application.
@@ -88,7 +90,7 @@ app.use('/**', (req, res, next) => {
   angularApp
     .handle(req)
     .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next()
+      response ? writeResponseToNodeResponse(response, res) : next(),
     )
     .catch(next);
 });

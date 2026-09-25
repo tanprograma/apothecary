@@ -36,6 +36,39 @@ export async function harmonizeSales(req: Request, res: Response) {
     res.send([]);
   }
 }
+export async function harmonizeSalesCompressed(req: Request, res: Response) {
+  try {
+    // creates date filter
+    const { startDate, endDate } = req.query;
+    let dateFilter: any = {};
+
+    if (!!startDate) {
+      dateFilter = {
+        ...dateFilter,
+        $gte: new Date(startDate as string).toISOString(),
+      };
+    }
+    if (!!endDate) {
+      dateFilter = {
+        ...dateFilter,
+        $lte: new Date(endDate as string).toISOString(),
+      };
+    }
+
+    // query db
+    const [sales, products] = await Promise.all([
+      SaleModel.find({
+        createdAt: dateFilter,
+      }).sort({ createdAt: -1 }),
+      ProductModel.find(),
+    ]);
+
+    const data = saleReducerCompressed(sales, products);
+    res.send(data);
+  } catch (error) {
+    res.send([]);
+  }
+}
 export function saleReducer(sales: any[], products: any[], stores: any[]) {
   let start: any[] = [];
   const data = sales.reduce((cumm: any[], current: any) => {
@@ -53,6 +86,30 @@ export function saleReducer(sales: any[], products: any[], stores: any[]) {
     return cumm;
   }, start);
   return data;
+}
+export function saleReducerCompressed(sales: any[], products: any[]) {
+  const start: Record<string, { productName: string; quantity: number }> = {};
+  const data = sales.reduce((cumm: any[], current: any) => {
+    current.products.forEach((item: any) => {
+      const product = find(products, item.product);
+      // check availability in the dictionary
+      if (!cumm[product._id]) {
+        cumm[product._id] = {
+          productName: product.name,
+          quantity: item.quantity * item.unit_value,
+        };
+      } else {
+        cumm[product._id] = {
+          ...cumm[product._id],
+          quantity:
+            cumm[product._id].quantity + item.quantity * item.unit_value,
+        };
+      }
+    });
+
+    return cumm;
+  }, start);
+  return Object.values(data);
 }
 function find(resources: any[], identifier: any) {
   return resources.find(
