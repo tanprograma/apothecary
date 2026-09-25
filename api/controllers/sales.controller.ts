@@ -20,6 +20,7 @@ export async function harmonizeSales(req: Request, res: Response) {
         $lte: new Date(endDate as string).toISOString(),
       };
     }
+
     // query db
     const [sales, products, stores] = await Promise.all([
       SaleModel.find({
@@ -42,10 +43,10 @@ export function saleReducer(sales: any[], products: any[], stores: any[]) {
     cumm.push(
       ...current.products.map((item: any) => {
         return {
-          productName: find(products, item.product),
+          productName: find(products, item.product).name,
           quantity: item.quantity * item.unit_value,
           date: current.createdAt,
-          location,
+          location: location.name,
         };
       }),
     );

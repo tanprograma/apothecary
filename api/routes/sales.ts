@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
     res.send([]);
   }
 });
-router.get('/harmonization/sales', harmonizeSales);
+router.get('/dbview', harmonizeSales);
 router.get('/raw', async (req, res) => {
   try {
     const { createdAt } = req.query;

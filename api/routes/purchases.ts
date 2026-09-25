@@ -27,7 +27,7 @@ router.get('', async (req, res) => {
     res.send([]);
   }
 });
-router.get('/harmonization/purchases', harmonizePurchases);
+router.get('/dbview', harmonizePurchases);
 router.get('/store/:id', async (req, res) => {
   const query = req.query;
   const { id } = req.params;
