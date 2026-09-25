@@ -9,6 +9,7 @@ import { addSalesInfo, InventoryModel, sell } from '../models/inventory';
 import { InventoriesStore } from '../../src/app/app-stores/inventory.store';
 import { SummaryStats } from '../utilities/statistics.util';
 import { createDateQuery } from '../utilities/util';
+import { harmonizeSales } from '../controllers/sales.controller';
 
 const router = Express.Router();
 router.get('/', async (req, res) => {
@@ -29,6 +30,7 @@ router.get('/', async (req, res) => {
     res.send([]);
   }
 });
+router.get('/harmonization/sales', harmonizeSales);
 router.get('/raw', async (req, res) => {
   try {
     const { createdAt } = req.query;
@@ -66,7 +68,7 @@ router.get('/store/:id', async (req, res) => {
 
   const data = await SaleUtil.find(
     { ProductModel, StoreModel, SaleModel },
-    { ...query, store: id }
+    { ...query, store: id },
   );
 
   res.send(new SaleUtil(data).transform());
@@ -74,7 +76,7 @@ router.get('/store/:id', async (req, res) => {
 router.get('/report', async (req, res) => {
   const data = await SaleUtil.find(
     { ProductModel, StoreModel, SaleModel },
-    req.query
+    req.query,
   );
 
   try {
@@ -98,7 +100,7 @@ router.get('/store-report', async (req, res) => {
   try {
     const data = await SaleUtil.find(
       { ProductModel, StoreModel, SaleModel },
-      req.query
+      req.query,
     );
 
     res.send(new SaleUtil(data).transform());

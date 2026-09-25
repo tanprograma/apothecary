@@ -9,6 +9,7 @@ import { PurchaseUtil } from '../utilities/purchase.util';
 import { InventoryModel, purchase } from '../models/inventory';
 
 import { SummaryStats } from '../utilities/statistics.util';
+import { harmonizePurchases } from '../controllers/purchase.controller';
 const router = Express.Router();
 router.get('', async (req, res) => {
   const { storeID } = req.query;
@@ -26,6 +27,7 @@ router.get('', async (req, res) => {
     res.send([]);
   }
 });
+router.get('/harmonization/purchases', harmonizePurchases);
 router.get('/store/:id', async (req, res) => {
   const query = req.query;
   const { id } = req.params;
