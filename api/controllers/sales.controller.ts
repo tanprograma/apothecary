@@ -160,10 +160,9 @@ export function saleReducerDaily(sales: any[], products: any[]) {
           quantity: item.quantity * item.unit_value,
         };
       } else {
-        cumm[product._id] = {
-          ...cumm[product._id],
-          quantity:
-            cumm[product._id].quantity + item.quantity * item.unit_value,
+        cumm[identifier] = {
+          ...cumm[identifier],
+          quantity: cumm[identifier].quantity + item.quantity * item.unit_value,
         };
       }
     });
