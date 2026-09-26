@@ -179,5 +179,5 @@ function find(resources: any[], identifier: any) {
 }
 export type SaleRecord = Record<
   string,
-  { productName: string; quantity: number; date: any }
+  { productName: string; quantity: number; date?: any }
 >;
