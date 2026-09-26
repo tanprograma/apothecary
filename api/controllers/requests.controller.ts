@@ -1,8 +1,10 @@
 import { ProductModel } from '../models/product';
-import { SaleModel } from '../models/sale';
+
 import { Request, Response } from 'express';
+import { RequestModel } from '../models/request';
 import { StoreModel } from '../models/store';
-export async function harmonizeSales(req: Request, res: Response) {
+
+export async function harmonizeRequests(req: Request, res: Response) {
   try {
     // creates date filter
     const { startDate, endDate } = req.query;
@@ -23,20 +25,20 @@ export async function harmonizeSales(req: Request, res: Response) {
 
     // query db
     const [sales, products, stores] = await Promise.all([
-      SaleModel.find({
+      RequestModel.find({
         createdAt: dateFilter,
       }).sort({ createdAt: -1 }),
       ProductModel.find(),
       StoreModel.find(),
     ]);
 
-    const data = saleReducer(sales, products, stores);
+    const data = requestReducer(sales, products, stores);
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export async function harmonizeSalesCompressed(req: Request, res: Response) {
+export async function harmonizeRequestsCompressed(req: Request, res: Response) {
   try {
     // creates date filter
     const { startDate, endDate } = req.query;
@@ -57,19 +59,19 @@ export async function harmonizeSalesCompressed(req: Request, res: Response) {
 
     // query db
     const [sales, products] = await Promise.all([
-      SaleModel.find({
+      RequestModel.find({
         createdAt: dateFilter,
       }).sort({ createdAt: -1 }),
       ProductModel.find(),
     ]);
 
-    const data = saleReducerCompressed(sales, products);
+    const data = requestReducerCompressed(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export async function harmonizeSalesDaily(req: Request, res: Response) {
+export async function harmonizeRequestsDaily(req: Request, res: Response) {
   try {
     // creates date filter
     const { startDate, endDate } = req.query;
@@ -90,27 +92,27 @@ export async function harmonizeSalesDaily(req: Request, res: Response) {
 
     // query db
     const [sales, products] = await Promise.all([
-      SaleModel.find({
+      RequestModel.find({
         createdAt: dateFilter,
       }).sort({ createdAt: -1 }),
       ProductModel.find(),
     ]);
 
-    const data = saleReducerDaily(sales, products);
+    const data = requestReducerDaily(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export function saleReducer(sales: any[], products: any[], stores: any[]) {
+export function requestReducer(sales: any[], products: any[], stores: any[]) {
   let start: any[] = [];
   const data = sales.reduce((cumm: any[], current: any) => {
-    const location = find(stores, current.store);
+    const location = find(stores, current.source);
     cumm.push(
       ...current.products.map((item: any) => {
         return {
           productName: find(products, item.product).name,
-          quantity: item.quantity * item.unit_value,
+          quantity: item.received * item.unit_value,
           date: current.createdAt,
           location: location.name,
         };
@@ -120,7 +122,7 @@ export function saleReducer(sales: any[], products: any[], stores: any[]) {
   }, start);
   return data;
 }
-export function saleReducerCompressed(sales: any[], products: any[]) {
+export function requestReducerCompressed(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
@@ -129,13 +131,13 @@ export function saleReducerCompressed(sales: any[], products: any[]) {
       if (!cumm[product._id]) {
         cumm[product._id] = {
           productName: product.name,
-          quantity: item.quantity * item.unit_value,
+          quantity: item.received * item.unit_value,
         };
       } else {
         cumm[product._id] = {
           ...cumm[product._id],
           quantity:
-            cumm[product._id].quantity + item.quantity * item.unit_value,
+            cumm[product._id].quantity + item.received * item.unit_value,
         };
       }
     });
@@ -144,7 +146,7 @@ export function saleReducerCompressed(sales: any[], products: any[]) {
   }, start);
   return Object.values(data);
 }
-export function saleReducerDaily(sales: any[], products: any[]) {
+export function requestReducerDaily(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
@@ -157,13 +159,13 @@ export function saleReducerDaily(sales: any[], products: any[]) {
       if (!cumm[identifier]) {
         cumm[identifier] = {
           productName: product.name,
-          quantity: item.quantity * item.unit_value,
+          quantity: item.received * item.unit_value,
         };
       } else {
         cumm[product._id] = {
           ...cumm[product._id],
           quantity:
-            cumm[product._id].quantity + item.quantity * item.unit_value,
+            cumm[product._id].quantity + item.received * item.unit_value,
         };
       }
     });
