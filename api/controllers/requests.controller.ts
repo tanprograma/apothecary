@@ -150,16 +150,15 @@ export function requestReducerDaily(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
-      const date = new Date(
-        new Date(current.createdAt).toLocaleDateString(),
-      ).getTime();
+      const date = new Date(new Date(current.createdAt).toLocaleDateString());
       const product = find(products, item.product);
-      const identifier = `${product._id}_${date}`;
+      const identifier = `${product._id}_${date.getTime()}`;
       // check availability in the dictionary
       if (!cumm[identifier]) {
         cumm[identifier] = {
           productName: product.name,
           quantity: item.received * item.unit_value,
+          date: date.toISOString(),
         };
       } else {
         cumm[identifier] = {
@@ -180,5 +179,5 @@ function find(resources: any[], identifier: any) {
 }
 export type SaleRecord = Record<
   string,
-  { productName: string; quantity: number }
+  { productName: string; quantity: number; date: any }
 >;
