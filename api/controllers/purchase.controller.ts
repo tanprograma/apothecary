@@ -1,9 +1,21 @@
 import { ProductModel } from '../models/product';
 
 import { Request, Response } from 'express';
-
 import { PurchaseModel } from '../models/purchase';
 import { SupplierModel } from '../models/supplier';
+
+export async function purchaseStatus(req: Request, res: Response) {
+  const last = await PurchaseModel.find()
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .lean();
+  const first = await PurchaseModel.find()
+    .sort({ createdAt: 1 })
+    .limit(1)
+    .lean();
+  const count = await PurchaseModel.countDocuments();
+  res.send({ start: first[0].createdAt, end: last[0].createdAt, count });
+}
 export async function harmonizePurchases(req: Request, res: Response) {
   try {
     // creates date filter
@@ -32,7 +44,7 @@ export async function harmonizePurchases(req: Request, res: Response) {
       SupplierModel.find(),
     ]);
 
-    const data = purchaseReducer(sales, products, stores);
+    const data = saleReducer(sales, products, stores);
     res.send(data);
   } catch (error) {
     res.send([]);
@@ -68,7 +80,7 @@ export async function harmonizePurchasesCompressed(
       ProductModel.find(),
     ]);
 
-    const data = purchaseReducerCompressed(sales, products);
+    const data = saleReducerCompressed(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
@@ -101,13 +113,13 @@ export async function harmonizePurchasesDaily(req: Request, res: Response) {
       ProductModel.find(),
     ]);
 
-    const data = purchaseReducerDaily(sales, products);
+    const data = saleReducerDaily(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export function purchaseReducer(sales: any[], products: any[], stores: any[]) {
+export function saleReducer(sales: any[], products: any[], stores: any[]) {
   let start: any[] = [];
   const data = sales.reduce((cumm: any[], current: any) => {
     const location = find(stores, current.source);
@@ -125,7 +137,7 @@ export function purchaseReducer(sales: any[], products: any[], stores: any[]) {
   }, start);
   return data;
 }
-export function purchaseReducerCompressed(sales: any[], products: any[]) {
+export function saleReducerCompressed(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
@@ -149,7 +161,7 @@ export function purchaseReducerCompressed(sales: any[], products: any[]) {
   }, start);
   return Object.values(data);
 }
-export function purchaseReducerDaily(sales: any[], products: any[]) {
+export function saleReducerDaily(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {

@@ -4,6 +4,18 @@ import { Request, Response } from 'express';
 import { RequestModel } from '../models/request';
 import { StoreModel } from '../models/store';
 
+export async function requestStatus(req: Request, res: Response) {
+  const last = await RequestModel.find()
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .lean();
+  const first = await RequestModel.find()
+    .sort({ createdAt: 1 })
+    .limit(1)
+    .lean();
+  const count = await RequestModel.countDocuments();
+  res.send({ start: first[0].createdAt, end: last[0].createdAt, count });
+}
 export async function harmonizeRequests(req: Request, res: Response) {
   try {
     // creates date filter
@@ -32,7 +44,7 @@ export async function harmonizeRequests(req: Request, res: Response) {
       StoreModel.find(),
     ]);
 
-    const data = requestReducer(sales, products, stores);
+    const data = saleReducer(sales, products, stores);
     res.send(data);
   } catch (error) {
     res.send([]);
@@ -65,7 +77,7 @@ export async function harmonizeRequestsCompressed(req: Request, res: Response) {
       ProductModel.find(),
     ]);
 
-    const data = requestReducerCompressed(sales, products);
+    const data = saleReducerCompressed(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
@@ -98,13 +110,13 @@ export async function harmonizeRequestsDaily(req: Request, res: Response) {
       ProductModel.find(),
     ]);
 
-    const data = requestReducerDaily(sales, products);
+    const data = saleReducerDaily(sales, products);
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export function requestReducer(sales: any[], products: any[], stores: any[]) {
+export function saleReducer(sales: any[], products: any[], stores: any[]) {
   let start: any[] = [];
   const data = sales.reduce((cumm: any[], current: any) => {
     const location = find(stores, current.source);
@@ -122,7 +134,7 @@ export function requestReducer(sales: any[], products: any[], stores: any[]) {
   }, start);
   return data;
 }
-export function requestReducerCompressed(sales: any[], products: any[]) {
+export function saleReducerCompressed(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
@@ -146,7 +158,7 @@ export function requestReducerCompressed(sales: any[], products: any[]) {
   }, start);
   return Object.values(data);
 }
-export function requestReducerDaily(sales: any[], products: any[]) {
+export function saleReducerDaily(sales: any[], products: any[]) {
   const start: SaleRecord = {};
   const data = sales.reduce((cumm: SaleRecord, current: any) => {
     current.products.forEach((item: any) => {
