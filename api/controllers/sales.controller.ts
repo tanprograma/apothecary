@@ -2,6 +2,12 @@ import { ProductModel } from '../models/product';
 import { SaleModel } from '../models/sale';
 import { Request, Response } from 'express';
 import { StoreModel } from '../models/store';
+export async function saleStatus(req: Request, res: Response) {
+  const last = await SaleModel.find().sort({ createdAt: -1 }).limit(1).lean();
+  const first = await SaleModel.find().sort({ createdAt: 1 }).limit(1).lean();
+  const count = await SaleModel.countDocuments();
+  res.send({ start: first[0].createdAt, end: last[0].createdAt, count });
+}
 export async function harmonizeSales(req: Request, res: Response) {
   try {
     // creates date filter

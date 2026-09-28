@@ -4,6 +4,7 @@ import {
   harmonizeSales,
   harmonizeSalesCompressed,
   harmonizeSalesDaily,
+  saleStatus,
 } from '../controllers/sales.controller';
 import {
   harmonizePurchases,
@@ -18,6 +19,7 @@ import {
 
 const router = Express.Router();
 
+router.get('/sales/status', saleStatus);
 router.get('/sales/raw', harmonizeSales);
 router.get('/sales/daily', harmonizeSalesDaily);
 router.get('/sales/compressed', harmonizeSalesCompressed);
