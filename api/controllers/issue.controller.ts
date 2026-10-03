@@ -1,9 +1,10 @@
 import { ProductModel } from '../models/product';
 
 import { Request, Response } from 'express';
-import { RequestModel } from '../models/request';
+
 import { StoreModel } from '../models/store';
-export class RequestRecords {
+import { RequestModel } from '../models/request';
+export class IssueRecords {
   model = RequestModel;
   constructor(private query: any) {}
   async requestStatus() {
@@ -76,7 +77,7 @@ export class RequestRecords {
   recordReducer(sales: any[], products: any[], stores: any[]) {
     let start: any[] = [];
     const data = sales.reduce((cumm: any[], current: any) => {
-      const location = this.find(stores, current.destination);
+      const location = this.find(stores, current.source);
       cumm.push(
         ...current.products.map((item: any) => {
           return {
@@ -153,7 +154,7 @@ export class RequestRecords {
     if (!!store) {
       filter = {
         ...filter,
-        destination: store,
+        source: store,
       };
     }
     let dateFilter: any = {};
@@ -174,38 +175,37 @@ export class RequestRecords {
     return filter;
   }
 }
-
-export async function requestsStatus(req: Request, res: Response) {
-  const entry = new RequestRecords({});
+export async function issuesStatus(req: Request, res: Response) {
+  const entry = new IssueRecords({});
   const data = await entry.requestStatus();
 
   res.send(data);
 }
-
-export async function harmonizeRequests(req: Request, res: Response) {
+export async function harmonizeIssues(req: Request, res: Response) {
   try {
     // creates date filter
-    const entry = new RequestRecords(req.query);
+    const entry = new IssueRecords(req.query);
     const data = await entry.harmonizeRequests();
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export async function harmonizeRequestsCompressed(req: Request, res: Response) {
+export async function harmonizeIssuesCompressed(req: Request, res: Response) {
   try {
     // creates date filter
-    const entry = new RequestRecords(req.query);
+    const entry = new IssueRecords(req.query);
     const data = await entry.harmonizeRequestsCompressed();
     res.send(data);
   } catch (error) {
     res.send([]);
   }
 }
-export async function harmonizeRequestsDaily(req: Request, res: Response) {
+
+export async function harmonizeIssuesDaily(req: Request, res: Response) {
   try {
     // creates date filter
-    const entry = new RequestRecords(req.query);
+    const entry = new IssueRecords(req.query);
     const data = await entry.harmonizeRequestsDaily();
     res.send(data);
   } catch (error) {

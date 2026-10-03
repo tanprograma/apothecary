@@ -3,7 +3,22 @@ import { ProductModel } from '../models/product';
 import { Request, Response } from 'express';
 import { PurchaseModel } from '../models/purchase';
 import { SupplierModel } from '../models/supplier';
-
+export async function purchase(req: Request, res: Response) {
+  try {
+    const doc = await PurchaseModel.create(req.body);
+    res.send({
+      status: true,
+      message: 'Purchase created successfully',
+      data: doc,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Error creating purchase',
+      data: null,
+    });
+  }
+}
 export async function purchaseStatus(req: Request, res: Response) {
   const last = await PurchaseModel.find()
     .sort({ createdAt: -1 })
