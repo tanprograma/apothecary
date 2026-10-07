@@ -40,6 +40,7 @@ export async function harmonizeSales(req: Request, res: Response) {
     res.send(data);
   } catch (error) {
     res.send([]);
+    
   }
 }
 export async function harmonizeSalesCompressed(req: Request, res: Response) {

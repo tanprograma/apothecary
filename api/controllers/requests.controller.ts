@@ -21,6 +21,10 @@ export class RequestRecords {
 
     return { start: first[0].createdAt, end: last[0].createdAt, count };
   }
+  async postRequest(payload: any) {
+    const created = await this.model.create(payload);
+    return created;
+  }
   async getRequests() {
     // creates date filter
     const query = this.parseQuery();
@@ -175,6 +179,16 @@ export class RequestRecords {
   }
 }
 
+export async function requestItems(req: Request, res: Response) {
+  try {
+    const entry = new RequestRecords({});
+    const data = await entry.postRequest(req.body);
+
+    res.send({ status: true, data });
+  } catch (error) {
+    res.send({ status: false });
+  }
+}
 export async function requestsStatus(req: Request, res: Response) {
   const entry = new RequestRecords({});
   const data = await entry.requestStatus();

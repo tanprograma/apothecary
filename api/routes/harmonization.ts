@@ -17,6 +17,7 @@ import {
   harmonizeRequests,
   harmonizeRequestsCompressed,
   harmonizeRequestsDaily,
+  requestItems,
   requestsStatus,
 } from '../controllers/requests.controller';
 import {
@@ -40,8 +41,10 @@ router.get('/purchases/daily', harmonizePurchasesDaily);
 router.get('/purchases/compressed', harmonizePurchasesCompressed);
 
 router.get('/requests/raw', harmonizeRequests);
+router.get('/requests/raw', harmonizeRequests);
 router.get('/requests/daily', harmonizeRequestsDaily);
 router.get('/requests/compressed', harmonizeRequestsCompressed);
+router.post('/requests', requestItems);
 
 router.get('/issues/raw', harmonizeIssues);
 router.get('/issues/daily', harmonizeIssuesDaily);
